@@ -27,11 +27,13 @@ exports.browse = async (looks, maxPage = 1) => {
         if (looks.includes(username)) {
           // Create todo item
           const t = {};
-          t.attachments = [];
+          t.images = [];
+          t.videos = [];
           t.id = element.dataset.todoId;
           t.username = username;
 
           // Get todo body
+          let bodyElement = element.getElementsByClassName("todo__body")[0];
           let body = element.getElementsByClassName("todo__body")[0].innerHTML;
 
           // Remove images in body
@@ -39,14 +41,25 @@ exports.browse = async (looks, maxPage = 1) => {
 
           t.body = body;
 
-          // Get todo attachment (images)
+          // Get todo attachments
           const attachments = element.getElementsByClassName("myAttachment");
 
           for (attachment of attachments) {
-            const img = attachment
-              .getElementsByTagName("img")[0]
-              .getAttribute("src");
-            t.attachments.push(img);
+            // Get images
+            const imgElements = attachment.getElementsByTagName("img");
+
+            if (imgElements.length) {
+              const img = imgElements[0].getAttribute("src");
+              t.images.push(img);
+            }
+
+            // Get videos
+            const videoElements = attachment.getElementsByTagName("source");
+
+            if (videoElements.length) {
+              const video = videoElements[0].getAttribute("src");
+              t.videos.push(video);
+            }
           }
 
           // Add todo item in todo collection

@@ -17,10 +17,10 @@ module.exports = class Db {
     return res.rows.map((item) => item[0]);
   }
 
-  async saveTodo({ id, username, body, attachments }) {
+  async saveTodo({ id, username, body, images, videos }) {
     const res = await this.client.query(
-      "INSERT INTO todos(todo_id, username, body, attachments) VALUES($1, $2, $3, $4) RETURNING *",
-      [id, username, body, JSON.stringify(attachments)]
+      "INSERT INTO todos(todo_id, username, body, images, videos) VALUES($1, $2, $3, $4, $5) RETURNING *",
+      [id, username, body, JSON.stringify(images), JSON.stringify(videos)]
     );
     return res.rows[0];
   }

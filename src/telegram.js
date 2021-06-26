@@ -3,11 +3,10 @@ const telegramBot = require("node-telegram-bot-api");
 module.exports = class Telegram {
   constructor() {
     this.chatId = process.env.TELEGRAM_CHAT_ID;
-    this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN, {
-      polling: true,
-    });
+    this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN);
   }
 
+  /*
   listen() {
     this.bot.onText(/\/help/, function (msg) {
       console.log(msg);
@@ -15,11 +14,12 @@ module.exports = class Telegram {
       bot.sendMessage(fromId, msg.from.first_name + " " + msg.from.last_name);
     });
   }
+  */
 
-  sendMessage({ body, username, attachments }) {
-    if (!attachments.length) {
-      const message = `${username}: ${body}`;
+  sendMessage({ body, username, images, videos }) {
+    const message = `${username}: ${body}`;
 
+    if (!images.length && !videos.length) {
       try {
         this.bot.sendMessage(this.chatId, message, {
           parse_mode: "html",
@@ -28,17 +28,35 @@ module.exports = class Telegram {
       } catch (error) {
         console.log(error);
       }
-    } else {
-      const noLinksBody = body.replace(/<a\b[^>]*>(.*?)<\/a>/g, "");
-      const caption = `${username}: ${noLinksBody}`;
+      return;
+    }
 
-      for (let attachment of attachments) {
+    if (images.length) {
+      for (let image of images) {
         try {
-          this.bot.sendPhoto(this.chatId, attachment, { caption: caption });
+          this.bot.sendPhoto(this.chatId, image, {
+            caption: message,
+            parse_mode: "html",
+          });
         } catch (error) {
           console.log(error);
         }
       }
+      return;
+    }
+
+    if (videos.length) {
+      for (let video of videos) {
+        try {
+          this.bot.sendVideo(this.chatId, video, {
+            caption: message,
+            parse_mode: "html",
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      return;
     }
   }
 };

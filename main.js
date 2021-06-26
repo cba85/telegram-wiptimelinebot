@@ -14,12 +14,17 @@ const Db = require("./src/db.js");
   console.log(todos);
 
   for (key in todos) {
-    const exists = await db.existsTodo(todos[key].id);
+    const todo = todos[key];
+    const exists = await db.existsTodo(todo.id);
     if (!exists) {
-      await db.saveTodo(todos[key]);
-      telegramBot.sendMessage(todos[key]);
+      await db.saveTodo(todo);
+      telegramBot.sendMessage(todo);
     }
   }
 
-  //telegramBot.listen();
+  // Kill scripts after some times to give telegram API time to send messages
+  setTimeout(function () {
+    console.log("done");
+    process.exit();
+  }, 5000);
 })();
