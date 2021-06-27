@@ -8,7 +8,7 @@ module.exports = class Db {
       database: process.env.PGDATABASE,
       port: process.env.PGPORT,
       host: process.env.PGHOST,
-      ssl: process.env.PGSSL,
+      ssl: { rejectUnauthorized: false },
     });
   }
 
