@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 
 exports.browse = async (looks, maxPage = 1) => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
   const page = await browser.newPage();
 
   const content = [];

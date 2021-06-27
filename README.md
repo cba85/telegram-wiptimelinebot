@@ -32,5 +32,10 @@ Insert usernames you want to follow in the `follows` table (e.g. @marc, @levelsi
 Then launch the script to parse and get [WIP.co](https://wip.co/) todos of these users inside your Telegram bot:
 
 ```
-$ node main.js
+$ node job.js
 ```
+
+## Deploy on Heroku
+
+- PostgreSQL: https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js
+- Pupeeter: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku
