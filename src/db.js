@@ -2,7 +2,14 @@ const { Client } = require("pg");
 
 module.exports = class Db {
   constructor() {
-    this.client = new Client();
+    this.client = new Client({
+      user: process.env.PGUSER,
+      password: process.env.PGPASSWORD,
+      database: process.env.PGDATABASE,
+      port: process.env.PGPORT,
+      host: process.env.PGHOST,
+      ssl: process.env.PGSSL,
+    });
   }
 
   async connect() {
