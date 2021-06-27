@@ -37,5 +37,23 @@ $ node job.js
 
 ## Deploy on Heroku
 
+The project is already configured for Heroku.
+
+You just need to add node and [pupeeter](https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku) buildpack.
+
+Then, set up your env credentials based on `.env` file. Don't forget to add `PGSSLMODE=no-verify` for Heroku PostgreSQL.
+
+Add Heroku PostgreSQL addon, connect on your database using an app like [Postico](https://eggerapps.at/postico/) or [TablePlus](https://tableplus.com/), and create the database schema using queries inside the `schema.sql` file.
+
+Insert makers usernames you want to follow (e.g. @marc).
+
+Your app is now ready.
+
+You should now open Heroku console and launch `heroku run node job.js` to test your app.
+
+When the app works correctly, add Heroku scheduler addon and create a job every 10 min (or hours) to receive updates on your Telegram bot automatically.
+
+### Resources
+
 - PostgreSQL: https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js
 - Pupeeter: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku
