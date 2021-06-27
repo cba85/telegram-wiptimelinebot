@@ -1,12 +1,12 @@
 # WIP.co telegram timeline
 
-Create your own [WIP.co](https://wip.co/) todos timeline of your favorite makers on Telegram .
+Create your own [WIP.co](https://wip.co/) todos timeline of your favorite makers on Telegram.
 
 This is a simple script to parse [WIP.co](https://wip.co/) website, get your favorite makers todos, and send them on Telegram using a Telegram bot.
 
 ## Requirements
 
-- A PostgreSQL server
+- A PostgreSQL server *(I've chosen PostgreSQL to deploy my app on Heroku)*
 - A Telegram bot
 
 ## Install
@@ -39,9 +39,17 @@ $ node job.js
 
 The project is already configured for Heroku.
 
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+### Manual deployment
+
 You just need to add node and [pupeeter](https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku) buildpack.
 
 Then, set up your env credentials based on `.env` file. Don't forget to add `PGSSLMODE=no-verify` for Heroku PostgreSQL.
+
+> You should use my [heroku-dotenv](https://github.com/cba85/heroku-dotenv) package to copy `.env` variables to Heroku environment variables.
+
+### Configuration
 
 Add Heroku PostgreSQL addon, connect on your database using an app like [Postico](https://eggerapps.at/postico/) or [TablePlus](https://tableplus.com/), and create the database schema using queries inside the `schema.sql` file.
 

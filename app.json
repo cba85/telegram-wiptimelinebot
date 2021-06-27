@@ -1,0 +1,50 @@
+{
+  "name": "WIP.co telegram timeline",
+  "description": "Create your own WIP.co todos timeline of your favorite makers on Telegram.",
+  "keywords": [
+    "wip.co",
+    "telegram",
+    "maker"
+  ],
+  "repository": "https://github.com/cba85/wip-telegram-timeline",
+  "env": {
+    "TELEGRAM_BOT_TOKEN": {
+      "value": ""
+    },
+    "TELEGRAM_CHAT_ID": {
+      "value": ""
+    },
+    "PGHOST": {
+      "value": ""
+    },
+    "PGUSER": {
+      "value": ""
+    },
+    "PGDATABASE": {
+      "value": ""
+    },
+    "PGPASSWORD": {
+      "value": ""
+    },
+    "PGPORT": {
+      "value": "5432"
+    },
+    "PGSSLMODE": {
+      "value": "no-verify"
+    }
+  },
+  "addons": [
+    "scheduler",
+    {
+      "plan": "heroku-postgresql",
+    }
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/jontewks/puppeteer-heroku-buildpack"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
