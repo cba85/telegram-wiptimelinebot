@@ -55,7 +55,7 @@ module.exports = class Telegram {
       let message = `You've unfollowed ${username}`;
 
       if (!deleted) {
-        message = `Error: ${username} does not exist.`;
+        message = `Error: you don't follow ${username}.`;
       }
 
       this.bot.sendMessage(chatId, message);
