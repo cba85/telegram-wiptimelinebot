@@ -2,9 +2,15 @@
 
 Create your own [WIP.co](https://wip.co/) todos timeline of your favorite makers on Telegram.
 
-This is a simple script to parse [WIP.co](https://wip.co/) website, get your favorite makers todos, and send them on Telegram using a Telegram bot.
+This is a simple script to parse [WIP.co](https://wip.co/) website, get your favorite makers completed todos, and send them on Telegram using a Telegram bot.
 
 This script doesn't require an active account on the website because it doesn't use WIP API, but scrap WIP website instead using [pupeeter](https://pptr.dev/).
+
+This scripts contains 3 entry points:
+
+- `index.js`: Telegram bot listener using webhooks for Heroku deployment
+- `job.js`: WIP.co parser using pupeeter to send your favorite makers completed todos on Telegram
+- `main.js`: Telegram bot listener using polling for local environment
 
 ## Requirements
 
