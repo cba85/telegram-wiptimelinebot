@@ -75,7 +75,9 @@ Add Heroku PostgreSQL addon, connect on your database using an app like [Postico
 
 Your app is now ready.
 
-You should now open Heroku console and launch `heroku run node main.js` to make the bot listening, then `heroku run node job.js` to test your app and start to parse some updates from your favorite makers. Don't forget to add usernames you want to follow in your Telegram bot using `/follow @username` command.
+> On Heroku, the web dyno uses `index.js` file and not `main.js` because this app will make Telegram bot uses "webhooks" on Heroku instead "polling" on local.
+
+You should now open Heroku console and launch `heroku run node job.js` to test your app and start to parse some updates from your favorite makers. Don't forget to add usernames you want to follow in your Telegram bot using `/follow @username` command.
 
 When the app works correctly, add Heroku scheduler addon and create a job every 10 min (or hours) to receive updates on your Telegram bot automatically.
 
