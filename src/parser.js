@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 
-exports.browse = async (looks, maxPage = 1) => {
-  const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+exports.browse = async (follows, maxPage = 1) => {
+  const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
   const page = await browser.newPage();
 
   const content = [];
@@ -9,7 +9,7 @@ exports.browse = async (looks, maxPage = 1) => {
   for (i = 1; i <= maxPage; i++) {
     await page.goto(`https://wip.co/?page=${i}`);
 
-    const todos = await page.evaluate((looks) => {
+    const todos = await page.evaluate((follows) => {
       // Create todo storage
       let todo = [];
 
@@ -24,7 +24,7 @@ exports.browse = async (looks, maxPage = 1) => {
         username = username.replace("https://wip.co/", "");
 
         // Check if the todos belongs to an user I follow
-        if (looks.includes(username)) {
+        if (follows.includes(username)) {
           // Create todo item
           const t = {};
           t.images = [];
@@ -49,7 +49,8 @@ exports.browse = async (looks, maxPage = 1) => {
             const imgElements = attachment.getElementsByTagName("img");
 
             if (imgElements.length) {
-              const img = imgElements[0].getAttribute("src");
+              //const img = imgElements[0].getAttribute("src");
+              const img = imgElements[0].dataset.zoomSrc; // Get high resolution image
               t.images.push(img);
             }
 
@@ -68,12 +69,12 @@ exports.browse = async (looks, maxPage = 1) => {
       }
 
       return todo;
-    }, looks);
+    }, follows);
 
     content.push(...todos);
   }
 
   await browser.close();
 
-  return content;
+  return content.reverse();
 };

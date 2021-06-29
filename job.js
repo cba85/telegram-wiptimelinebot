@@ -6,9 +6,9 @@ const Db = require("./src/db.js");
 (async () => {
   const db = new Db();
   db.connect();
-  const looks = await db.getUsersToFollow();
+  const follows = await db.getMakers();
 
-  const todos = await browse(looks);
+  const todos = await browse(follows);
   const telegramBot = new Telegram();
 
   console.log(todos);
