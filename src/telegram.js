@@ -1,19 +1,21 @@
 const telegramBot = require("node-telegram-bot-api");
 
 module.exports = class Telegram {
-  constructor() {
+  constructor(type = null) {
     this.chatId = process.env.TELEGRAM_CHAT_ID;
 
-    if (process.env.APP_ENV === "production") {
+    if (!type) {
       this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN);
-      this.bot.setWebHook(process.env.APP_URL + this.bot.token);
-    } else {
+    } else if (type == "polling") {
       this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN, {
         polling: true,
       });
+    } else if (type == "webhook") {
+      this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN);
+      this.bot.setWebHook(process.env.APP_URL + this.bot.token);
     }
 
-    console.log("Telegram bot server started in the " + process.env.APP_ENV + " mode");
+    console.log(`Telegram bot server started in the ${type} mode`);
   }
 
   listen(db) {
@@ -73,6 +75,16 @@ module.exports = class Telegram {
       }
 
       this.bot.sendMessage(chatId, message);
+    });
+
+    // /update command
+    this.bot.onText(/\/update/, async (msg) => {
+      const chatId = msg.chat.id;
+
+      this.bot.sendMessage(
+        chatId,
+        `/list: list the makers you follow\n/follow @username\n/unfollow @username`
+      );
     });
   }
 
