@@ -2,9 +2,15 @@
   "name": "WIP Telegram Timeline",
   "description": "Create your own WIP.co todos timeline of your favorite makers on Telegram.",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "dotenv": "^10.0.0",
+    "express": "^4.17.1",
     "node-telegram-bot-api": "^0.53.0",
     "pg": "^8.6.0",
     "puppeteer": "^10.0.0"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
   }
 }

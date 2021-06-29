@@ -9,7 +9,7 @@ This script doesn't require an active account on the website because it doesn't 
 ## Requirements
 
 - A PostgreSQL server *(I've chosen PostgreSQL to deploy my app on Heroku)*
-- A Telegram bot
+- A Telegram bot (create your own bot using Telegram's BotFather and grab your TOKEN)
 
 ## Install
 
@@ -25,7 +25,7 @@ cp -v .env.example .env
 
 Add your database and Telegram credentials into the `.env` file.
 
-> If using this script locally, comment `PGSSLMODE=no-verify`.
+> If using this script locally, comment `PGSSLMODE=no-verify` and uses `APP_ENV=local`.
 
 Create a PostgreSQL table based on `schema.sql` file.
 
@@ -53,6 +53,7 @@ Use a cron scheduler to automatically receive updates (completed todos) from you
 - `/list`: list the makers you follow
 - `/follow @username`: follow @username
 - `/unfollow @username`: unfollow @username
+- `/chatid`: get Telegram chatId 
 
 ## Deploy on Heroku
 
@@ -64,7 +65,7 @@ The project is already configured for Heroku.
 
 You just need to add node and [pupeeter](https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku) buildpack.
 
-Then, set up your env credentials based on `.env` file. Don't forget to add `PGSSLMODE=no-verify` for Heroku PostgreSQL.
+Then, set up your env credentials based on `.env` file. Don't forget to add `PGSSLMODE=no-verify` for Heroku PostgreSQL and `APP_ENV=production`.
 
 > You should use my [heroku-dotenv](https://github.com/cba85/heroku-dotenv) package to copy `.env` variables to Heroku environment variables.
 
@@ -74,7 +75,7 @@ Add Heroku PostgreSQL addon, connect on your database using an app like [Postico
 
 Your app is now ready.
 
-You should now open Heroku console and launch `heroku run node job.js` to test your app and start to parse some updates from your favorite makers. Don't forget to add usernames you want to follow in your Telegram bot using `/follow @username` command.
+You should now open Heroku console and launch `heroku run node main.js` to make the bot listening, then `heroku run node job.js` to test your app and start to parse some updates from your favorite makers. Don't forget to add usernames you want to follow in your Telegram bot using `/follow @username` command.
 
 When the app works correctly, add Heroku scheduler addon and create a job every 10 min (or hours) to receive updates on your Telegram bot automatically.
 
@@ -82,3 +83,4 @@ When the app works correctly, add Heroku scheduler addon and create a job every 
 
 - PostgreSQL: https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js
 - Pupeeter: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku
+- Heroku Telegram Bot: https://github.com/odditive/heroku-node-telegram-bot

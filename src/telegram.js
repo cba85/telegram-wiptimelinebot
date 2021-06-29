@@ -3,9 +3,17 @@ const telegramBot = require("node-telegram-bot-api");
 module.exports = class Telegram {
   constructor() {
     this.chatId = process.env.TELEGRAM_CHAT_ID;
-    this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN, {
-      polling: true,
-    });
+
+    if (process.env.APP_ENV === "production") {
+      this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN);
+      this.bot.setWebHook(process.env.APP_URL + this.bot.token);
+    } else {
+      this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN, {
+        polling: true,
+      });
+    }
+
+    console.log("Telegram bot server started in the " + process.env.APP_ENV + " mode");
   }
 
   listen(db) {
@@ -13,7 +21,17 @@ module.exports = class Telegram {
     this.bot.onText(/\/start/, async (msg) => {
       const chatId = msg.chat.id;
 
-      this.bot.sendMessage(chatId, `/list: list the makers you follow\n/follow @username\n/unfollow @username`);
+      this.bot.sendMessage(
+        chatId,
+        `/list: list the makers you follow\n/follow @username\n/unfollow @username`
+      );
+    });
+
+    // /chatid command
+    this.bot.onText(/\/chatid/, async (msg) => {
+      const chatId = msg.chat.id;
+
+      this.bot.sendMessage(chatId, `Telegram chatId: ${chatId}`);
     });
 
     // /list command
