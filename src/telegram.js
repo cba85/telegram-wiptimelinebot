@@ -76,16 +76,6 @@ module.exports = class Telegram {
 
       this.bot.sendMessage(chatId, message);
     });
-
-    // /update command
-    this.bot.onText(/\/update/, async (msg) => {
-      const chatId = msg.chat.id;
-
-      this.bot.sendMessage(
-        chatId,
-        `/list: list the makers you follow\n/follow @username\n/unfollow @username`
-      );
-    });
   }
 
   sendMessage({ body, username, images, videos }) {
