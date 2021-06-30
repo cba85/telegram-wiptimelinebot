@@ -31,7 +31,7 @@ cp -v .env.example .env
 
 Add your database and Telegram credentials into the `.env` file.
 
-> If using this script locally, comment `PGSSLMODE=no-verify` and uses `APP_ENV=local`.
+> If using this script locally, comment `PGSSLMODE=no-verify`.
 
 Create a PostgreSQL table based on `schema.sql` file.
 
@@ -71,7 +71,7 @@ The project is already configured for Heroku.
 
 You just need to add node and [pupeeter](https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku) buildpack.
 
-Then, set up your env credentials based on `.env` file. Don't forget to add `PGSSLMODE=no-verify` for Heroku PostgreSQL and `APP_ENV=production`.
+Then, set up your env credentials based on `.env` file. Don't forget to add `PGSSLMODE=no-verify` for Heroku PostgreSQL.
 
 > You should use my [heroku-dotenv](https://github.com/cba85/heroku-dotenv) package to copy `.env` variables to Heroku environment variables.
 
