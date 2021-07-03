@@ -6,7 +6,16 @@ module.exports = class Db {
   }
 
   async connect() {
-    await this.client.connect();
+    if (process.env.APP_ENV == "heroku") {
+      await this.client.connect({
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      });
+    } else {
+      await this.client.connect();
+    }
   }
 
   async getMakers() {
@@ -19,7 +28,10 @@ module.exports = class Db {
   }
 
   async getMaker(username) {
-    const res = await this.client.query("SELECT * from follows WHERE username = $1", [username]);
+    const res = await this.client.query(
+      "SELECT * from follows WHERE username = $1",
+      [username]
+    );
 
     if (!res.rowCount) {
       return false;
@@ -30,7 +42,7 @@ module.exports = class Db {
 
   async removeMakerToFollow(username) {
     const maker = await this.getMaker(username);
-    
+
     if (!maker) {
       return false;
     }
@@ -42,12 +54,15 @@ module.exports = class Db {
 
   async addMakerToFollow(username) {
     const maker = await this.getMaker(username);
-    
+
     if (maker) {
       return false;
     }
 
-    const res = await this.client.query("INSERT INTO follows(username) VALUES($1) RETURNING *", [username]);
+    const res = await this.client.query(
+      "INSERT INTO follows(username) VALUES($1) RETURNING *",
+      [username]
+    );
 
     return res.rows[0];
   }
@@ -62,7 +77,10 @@ module.exports = class Db {
   }
 
   async existsTodo(todoId) {
-    const res = await this.client.query("SELECT * from todos WHERE todo_id = $1", [todoId]);
+    const res = await this.client.query(
+      "SELECT * from todos WHERE todo_id = $1",
+      [todoId]
+    );
 
     return res.rowCount;
   }

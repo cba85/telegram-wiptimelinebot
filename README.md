@@ -20,7 +20,7 @@ This scripts contains 3 entry points:
 ## Install
 
 ```
-$ npm i install
+$ npm install
 ```
 
 Create a `.env` file based on `.env.example` file:
@@ -48,8 +48,10 @@ In your Telegram bot, add usernames you want to follow using `/follow @username`
 Then launch the script to parse and get [WIP.co](https://wip.co/) todos of these users inside your Telegram bot:
 
 ```
-$ node job.js
+$ node job.js [MAX_PAGE_TO_SCRAP]
 ```
+
+Default max page to scrap is 1.
 
 Use a cron scheduler to automatically receive updates (completed todos) from your favorite makers.
 
@@ -71,7 +73,7 @@ The project is already configured for Heroku.
 
 You just need to add node and [pupeeter](https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku) buildpack.
 
-Then, set up your env credentials based on `.env` file. Don't forget to add `PGSSLMODE=no-verify` for Heroku PostgreSQL.
+Then, set up your env credentials based on `.env` file. Set up `APP_ENV=heroku`. You don't need to setup `PG_*` for PostgreSQL credentials because the script will automatically use Heroku `DATABASE_URL`.
 
 > You should use my [heroku-dotenv](https://github.com/cba85/heroku-dotenv) package to copy `.env` variables to Heroku environment variables.
 
