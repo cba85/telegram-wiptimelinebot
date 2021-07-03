@@ -77,6 +77,13 @@ Then, set up your env credentials based on `.env` file. Set up `APP_ENV=heroku`.
 
 > You should use my [heroku-dotenv](https://github.com/cba85/heroku-dotenv) package to copy `.env` variables to Heroku environment variables.
 
+On Heroku, It's better to use `DATABASE_URL` instead default `PG_*` environment credentials because of this:
+
+> Maintenance is required for your database
+> Your database DATABASE_URL on wip-telegram requires maintenance. During this period, your database will become read-only. Once maintenance has completed, your database credentials and hostname will have changed, but we will update your app’s config variables accordingly to reflect the new database connection string.
+>
+>This automated maintenance is a necessary part of our Hobby tier plans, Dev and Basic. Should you need more control over maintenance windows, a production database (Standard tier or higher) offers more control over database maintenance, as we are able to schedule them in advance and provide better tools for self-served maintenance.
+
 ### Configuration
 
 Add Heroku PostgreSQL addon, connect on your database using an app like [Postico](https://eggerapps.at/postico/) or [TablePlus](https://tableplus.com/), and create the database schema using queries inside the `schema.sql` file.
