@@ -2,20 +2,20 @@ const { Client } = require("pg");
 
 module.exports = class Db {
   constructor() {
-    this.client = new Client();
-  }
-
-  async connect() {
     if (process.env.APP_ENV == "heroku") {
-      await this.client.connect({
+      this.client = new Client({
         connectionString: process.env.DATABASE_URL,
         ssl: {
           rejectUnauthorized: false,
         },
       });
     } else {
-      await this.client.connect();
+      this.client = new Client();
     }
+  }
+
+  async connect() {
+    await this.client.connect();
   }
 
   async getMakers() {
