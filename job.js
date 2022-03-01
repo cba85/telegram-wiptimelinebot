@@ -6,22 +6,27 @@ const Db = require("./src/db.js");
 (async () => {
   const db = new Db();
   db.connect();
-  const follows = await db.getMakers();
 
-  let maxPage = 1;
-  if (typeof process.argv[2] !== "undefined") {
-    maxPage = parseInt(process.argv[2]);
-  }
-
-  const todos = await browse(follows, maxPage);
   const telegramBot = new Telegram();
+  const users = await db.getUsers();
 
-  for (key in todos) {
-    const todo = todos[key];
-    const exists = await db.existsTodo(todo.id);
-    if (!exists) {
-      await db.saveTodo(todo);
-      telegramBot.sendMessage(todo);
+  for (user of users) {
+    const follows = await db.getMakers(user);
+
+    let maxPage = 1;
+    if (typeof process.argv[2] !== "undefined") {
+      maxPage = parseInt(process.argv[2]);
+    }
+
+    const todos = await browse(follows, maxPage);
+
+    for (key in todos) {
+      const todo = todos[key];
+      const exists = await db.existsTodo(user, todo.id);
+      if (!exists) {
+        await db.saveTodo(user, todo);
+        telegramBot.sendMessage(user, todo);
+      }
     }
   }
 

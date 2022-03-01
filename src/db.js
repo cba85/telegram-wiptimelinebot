@@ -18,19 +18,53 @@ module.exports = class Db {
     await this.client.connect();
   }
 
-  async getMakers() {
+  async checkUser(id) {
+    const res = await this.client.query("SELECT * from users WHERE id = $1", [
+      id,
+    ]);
+
+    return res.rowCount;
+  }
+
+  async getUsers() {
     const res = await this.client.query({
       rowMode: "array",
-      text: "SELECT username from follows",
+      text: "SELECT id from users",
     });
 
     return res.rows.map((item) => item[0]);
   }
 
-  async getMaker(username) {
+  async createUser(user) {
     const res = await this.client.query(
-      "SELECT * from follows WHERE username = $1",
-      [username]
+      "INSERT INTO users(id, username, first_name, last_name, is_bot, language_code) VALUES($1, $2, $3, $4, $5, $6) RETURNING *",
+      [
+        user.id,
+        user.username,
+        user.first_name,
+        user.last_name,
+        user.is_bot,
+        user.language_code,
+      ]
+    );
+
+    return res.rows[0];
+  }
+
+  async getMakers(id) {
+    const res = await this.client.query({
+      rowMode: "array",
+      text: "SELECT username from follows WHERE user_id = $1",
+      values: [id],
+    });
+
+    return res.rows.map((item) => item[0]);
+  }
+
+  async getMaker(id, username) {
+    const res = await this.client.query(
+      "SELECT * from follows WHERE user_id = $1 AND username = $2",
+      [id, username]
     );
 
     if (!res.rowCount) {
@@ -40,8 +74,8 @@ module.exports = class Db {
     return res.rows[0];
   }
 
-  async removeMakerToFollow(username) {
-    const maker = await this.getMaker(username);
+  async unfollowMaker(id, username) {
+    const maker = await this.getMaker(id, username);
 
     if (!maker) {
       return false;
@@ -52,34 +86,41 @@ module.exports = class Db {
     return true;
   }
 
-  async addMakerToFollow(username) {
-    const maker = await this.getMaker(username);
+  async followMaker(id, username) {
+    const maker = await this.getMaker(id, username);
 
     if (maker) {
       return false;
     }
 
     const res = await this.client.query(
-      "INSERT INTO follows(username) VALUES($1) RETURNING *",
-      [username]
+      "INSERT INTO follows(user_id, username) VALUES($1, $2) RETURNING *",
+      [id, username]
     );
 
     return res.rows[0];
   }
 
-  async saveTodo({ id, username, body, images, videos }) {
+  async saveTodo(userId, { id, username, body, images, videos }) {
     const res = await this.client.query(
-      "INSERT INTO todos(todo_id, username, body, images, videos) VALUES($1, $2, $3, $4, $5) RETURNING *",
-      [id, username, body, JSON.stringify(images), JSON.stringify(videos)]
+      "INSERT INTO todos(user_id, todo_id, username, body, images, videos) VALUES($1, $2, $3, $4, $5, $6) RETURNING *",
+      [
+        userId,
+        id,
+        username,
+        body,
+        JSON.stringify(images),
+        JSON.stringify(videos),
+      ]
     );
 
     return res.rows[0];
   }
 
-  async existsTodo(todoId) {
+  async existsTodo(userId, todoId) {
     const res = await this.client.query(
-      "SELECT * from todos WHERE todo_id = $1",
-      [todoId]
+      "SELECT * from todos WHERE user_id = $1 AND todo_id = $2",
+      [userId, todoId]
     );
 
     return res.rowCount;

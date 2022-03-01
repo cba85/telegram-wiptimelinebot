@@ -3,8 +3,6 @@ const request = require("request");
 
 module.exports = class Telegram {
   constructor(type = null) {
-    this.chatId = process.env.TELEGRAM_CHAT_ID;
-
     if (!type) {
       this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN);
     } else if (type == "polling") {
@@ -19,42 +17,54 @@ module.exports = class Telegram {
     console.log(`Telegram bot server started in the ${type} mode`);
   }
 
+  // Commands
   listen(db) {
-    // /start command
+    // Checking on every messages
+    this.bot.on("message", async (msg) => {
+      const user = await db.checkUser(msg.chat.id);
+
+      if (!user) {
+        const added = await db.createUser(msg.from);
+      }
+    });
+
+    // /start
     this.bot.onText(/\/start/, async (msg) => {
-      const chatId = msg.chat.id;
-
       this.bot.sendMessage(
-        chatId,
-        `/list: list the makers you follow\n/follow @username\n/unfollow @username`
+        msg.chat.id,
+        `Create your own <a href="https://wip.co">wip.co</a> todos timeline of your favorite makers.\n\nCommands:\n/list: list the makers you follow\n/follow @username: follow a maker\n/unfollow @username: unfollow a maker`,
+        { parse_mode: "HTML" }
       );
     });
 
-    // /chatid command
-    this.bot.onText(/\/chatid/, async (msg) => {
-      const chatId = msg.chat.id;
-
-      this.bot.sendMessage(chatId, `Telegram chatId: ${chatId}`);
+    // /debug
+    this.bot.onText(/\/debug/, async (msg) => {
+      this.bot.sendMessage(
+        msg.chat.id,
+        `chatId: ${msg.chat.id}\nusername: ${msg.chat.username}`
+      );
     });
 
-    // /list command
+    // /list
     this.bot.onText(/\/list/, async (msg) => {
-      const chatId = msg.chat.id;
+      let follows = await db.getMakers(msg.chat.id);
 
-      let follows = await db.getMakers();
+      let message = "";
 
-      this.bot.sendMessage(
-        chatId,
-        `✌️ Makers you follow: ${follows.join(", ")}`
-      );
+      if (!follows.length) {
+        message = `😭 You don't follow any maker yet. Use "/follow @username" command to follow a wip.co maker.`;
+      } else {
+        message = `✌️ Makers you follow: ${follows.join(", ")}`;
+      }
+
+      this.bot.sendMessage(msg.chat.id, message);
     });
 
-    // /unfollow command
+    // /unfollow
     this.bot.onText(/\/unfollow (.+)/, async (msg, match) => {
-      const chatId = msg.chat.id;
       const username = match[1];
 
-      const deleted = await db.removeMakerToFollow(username);
+      const deleted = await db.unfollowMaker(msg.chat.id, username);
 
       let message = `🙈 You've unfollowed ${username}`;
 
@@ -62,12 +72,11 @@ module.exports = class Telegram {
         message = `🔴 Error: you don't follow ${username}.`;
       }
 
-      this.bot.sendMessage(chatId, message);
+      this.bot.sendMessage(msg.chat.id, message);
     });
 
-    // /follow command
+    // /follow
     this.bot.onText(/\/follow (.+)/, async (msg, match) => {
-      const chatId = msg.chat.id;
       const username = match[1];
 
       let message = `👀 You now follow ${username}`;
@@ -75,24 +84,25 @@ module.exports = class Telegram {
       if (!username.includes("@")) {
         message = `🟠 Typo: use @${username}.`;
       } else {
-        const added = await db.addMakerToFollow(username);
+        const added = await db.followMaker(msg.chat.id, username);
 
         if (!added) {
           message = `🔴 Error: you already follow ${username}.`;
         }
       }
 
-      this.bot.sendMessage(chatId, message);
+      this.bot.sendMessage(msg.chat.id, message);
     });
   }
 
-  sendMessage({ body, username, images, videos }) {
+  // Send Telegram Todo message
+  sendMessage(id, { body, username, images, videos }) {
     const message = `${username}: ${body}`;
 
     // Text
     if (!images.length && !videos.length) {
       try {
-        this.bot.sendMessage(this.chatId, message, {
+        this.bot.sendMessage(id, message, {
           parse_mode: "html",
           disable_web_page_preview: true,
         });
@@ -107,7 +117,7 @@ module.exports = class Telegram {
     if (images.length) {
       for (let image of images) {
         try {
-          this.bot.sendPhoto(this.chatId, image, {
+          this.bot.sendPhoto(id, image, {
             caption: message,
             parse_mode: "html",
           });
@@ -132,7 +142,7 @@ module.exports = class Telegram {
             if (response.headers["content-length"] < 20000000) {
               // Send video file on Telegram
               try {
-                this.bot.sendVideo(this.chatId, video, {
+                this.bot.sendVideo(id, video, {
                   caption: message,
                   parse_mode: "html",
                 });
@@ -143,7 +153,7 @@ module.exports = class Telegram {
               // Send video url on Telegram
               const videoMessage = `${username}: <a href="${video}">▶️ video</a> – ${body}`;
               try {
-                this.bot.sendMessage(this.chatId, videoMessage, {
+                this.bot.sendMessage(id, videoMessage, {
                   parse_mode: "html",
                   disable_web_page_preview: true,
                 });
