@@ -9,14 +9,12 @@ const Db = require("./src/db.js");
   const follows = await db.getMakers();
 
   let maxPage = 1;
-  if (typeof process.argv[2] !== 'undefined') {
+  if (typeof process.argv[2] !== "undefined") {
     maxPage = parseInt(process.argv[2]);
   }
 
   const todos = await browse(follows, maxPage);
   const telegramBot = new Telegram();
-
-  console.log(todos);
 
   for (key in todos) {
     const todo = todos[key];

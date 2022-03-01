@@ -26,7 +26,7 @@ exports.browse = async (follows, maxPage = 1) => {
         // Check if the todos belongs to an user I follow
         if (follows.includes(username)) {
           // Create todo item
-          const t = {};
+          let t = {};
           t.images = [];
           t.videos = [];
           t.id = element.dataset.todoId;
@@ -37,9 +37,7 @@ exports.browse = async (follows, maxPage = 1) => {
           let body = element.getElementsByClassName("todo__body")[0].innerHTML;
 
           // Remove images in body
-          body = body.replace(/<img .*?>/g, "");
-
-          t.body = body;
+          t.body = body.replace(/<img .*?>/g, "");
 
           // Get todo attachments
           const attachments = element.getElementsByClassName("myAttachment");

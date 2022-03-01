@@ -1,4 +1,5 @@
 const telegramBot = require("node-telegram-bot-api");
+const request = require("request");
 
 module.exports = class Telegram {
   constructor(type = null) {
@@ -42,7 +43,10 @@ module.exports = class Telegram {
 
       let follows = await db.getMakers();
 
-      this.bot.sendMessage(chatId, `Makers you follow: ${follows.join(", ")}`);
+      this.bot.sendMessage(
+        chatId,
+        `✌️ Makers you follow: ${follows.join(", ")}`
+      );
     });
 
     // /unfollow command
@@ -52,10 +56,10 @@ module.exports = class Telegram {
 
       const deleted = await db.removeMakerToFollow(username);
 
-      let message = `You've unfollowed ${username}`;
+      let message = `🙈 You've unfollowed ${username}`;
 
       if (!deleted) {
-        message = `Error: you don't follow ${username}.`;
+        message = `🔴 Error: you don't follow ${username}.`;
       }
 
       this.bot.sendMessage(chatId, message);
@@ -66,12 +70,16 @@ module.exports = class Telegram {
       const chatId = msg.chat.id;
       const username = match[1];
 
-      const added = await db.addMakerToFollow(username);
+      let message = `👀 You now follow ${username}`;
 
-      let message = `You now follow ${username}`;
+      if (!username.includes("@")) {
+        message = `🟠 Typo: use @${username}.`;
+      } else {
+        const added = await db.addMakerToFollow(username);
 
-      if (!added) {
-        message = `Error: you already follow ${username}.`;
+        if (!added) {
+          message = `🔴 Error: you already follow ${username}.`;
+        }
       }
 
       this.bot.sendMessage(chatId, message);
@@ -81,6 +89,7 @@ module.exports = class Telegram {
   sendMessage({ body, username, images, videos }) {
     const message = `${username}: ${body}`;
 
+    // Text
     if (!images.length && !videos.length) {
       try {
         this.bot.sendMessage(this.chatId, message, {
@@ -90,9 +99,11 @@ module.exports = class Telegram {
       } catch (error) {
         console.log(error);
       }
+
       return;
     }
 
+    // Images
     if (images.length) {
       for (let image of images) {
         try {
@@ -104,21 +115,47 @@ module.exports = class Telegram {
           console.log(error);
         }
       }
+
       return;
     }
 
+    // Videos
     if (videos.length) {
       for (let video of videos) {
-        try {
-          this.bot.sendVideo(this.chatId, video, {
-            caption: message,
-            parse_mode: "html",
-          });
-        } catch (error) {
-          console.log(error);
-        }
+        // Check Telegram video size limit (20mb)
+        request(
+          {
+            url: video,
+            method: "HEAD",
+          },
+          (err, response) => {
+            if (response.headers["content-length"] < 20000000) {
+              // Send video file on Telegram
+              try {
+                this.bot.sendVideo(this.chatId, video, {
+                  caption: message,
+                  parse_mode: "html",
+                });
+              } catch (error) {
+                console.log(error);
+              }
+            } else {
+              // Send video url on Telegram
+              const videoMessage = `${username}: <a href="${video}">▶️ video</a> – ${body}`;
+              try {
+                this.bot.sendMessage(this.chatId, videoMessage, {
+                  parse_mode: "html",
+                  disable_web_page_preview: true,
+                });
+              } catch (error) {
+                console.log(error);
+              }
+            }
+          }
+        );
+
+        return;
       }
-      return;
     }
   }
 };
