@@ -18,7 +18,8 @@ module.exports = class Db {
     await this.client.connect();
   }
 
-  async checkUser(id) {
+  // Check if connected Telegram user exists
+  async checkIfUserExists(id) {
     const res = await this.client.query("SELECT * from users WHERE id = $1", [
       id,
     ]);
@@ -26,6 +27,7 @@ module.exports = class Db {
     return res.rowCount;
   }
 
+  // Get all Telegram users (used for checking WIP.co todos)
   async getUsers() {
     const res = await this.client.query({
       rowMode: "array",
@@ -35,6 +37,7 @@ module.exports = class Db {
     return res.rows.map((item) => item[0]);
   }
 
+  // Create a user in database from Telegram
   async createUser(user) {
     const res = await this.client.query(
       "INSERT INTO users(id, username, first_name, last_name, is_bot, language_code) VALUES($1, $2, $3, $4, $5, $6) RETURNING *",
@@ -51,7 +54,18 @@ module.exports = class Db {
     return res.rows[0];
   }
 
-  async getMakers(id) {
+  // Count followers for a user
+  async countFollowers(userId) {
+    const res = await this.client.query(
+      "SELECT * from follows WHERE user_id = $1",
+      [userId]
+    );
+
+    return res.rowCount;
+  }
+
+  // Get followers for a user
+  async getFollowers(id) {
     const res = await this.client.query({
       rowMode: "array",
       text: "SELECT username from follows WHERE user_id = $1",
@@ -61,7 +75,8 @@ module.exports = class Db {
     return res.rows.map((item) => item[0]);
   }
 
-  async getMaker(id, username) {
+  // Get a specific follower for a user
+  async getFollower(id, username) {
     const res = await this.client.query(
       "SELECT * from follows WHERE user_id = $1 AND username = $2",
       [id, username]
@@ -74,8 +89,9 @@ module.exports = class Db {
     return res.rows[0];
   }
 
+  // Unfollow a wip.co maker
   async unfollowMaker(id, username) {
-    const maker = await this.getMaker(id, username);
+    const maker = await this.getFollower(id, username);
 
     if (!maker) {
       return false;
@@ -86,8 +102,9 @@ module.exports = class Db {
     return true;
   }
 
+  // Follow a wip.co maker
   async followMaker(id, username) {
-    const maker = await this.getMaker(id, username);
+    const maker = await this.getFollower(id, username);
 
     if (maker) {
       return false;
@@ -101,6 +118,7 @@ module.exports = class Db {
     return res.rows[0];
   }
 
+  // Save a completed todo from wip.co in database
   async saveTodo(userId, { id, username, body, images, videos }) {
     const res = await this.client.query(
       "INSERT INTO todos(user_id, todo_id, username, body, images, videos) VALUES($1, $2, $3, $4, $5, $6) RETURNING *",
@@ -117,6 +135,7 @@ module.exports = class Db {
     return res.rows[0];
   }
 
+  // Check if a todo exists in database already
   async existsTodo(userId, todoId) {
     const res = await this.client.query(
       "SELECT * from todos WHERE user_id = $1 AND todo_id = $2",

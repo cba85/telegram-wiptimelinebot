@@ -1,6 +1,6 @@
 {
   "name": "wip-telegram-timeline",
-  "description": "Create your own WIP.co todos timeline of your favorite makers on Telegram.",
+  "description": "Create your custom WIP.co todos timeline of your favorite makers on Telegram.",
   "dependencies": {
     "body-parser": "^1.19.0",
     "dotenv": "^10.0.0",

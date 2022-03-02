@@ -1,6 +1,10 @@
 # WIP.co telegram timeline
 
-Create your own [WIP.co](https://wip.co/) todos timeline of your favorite makers on Telegram.
+Create your custom [WIP.co](https://wip.co/) completed todos timeline of your favorite makers on Telegram.
+
+🤖 To use the bot, just add WipTimelineBot on Telegram !
+
+---
 
 This is a simple script to parse [WIP.co](https://wip.co/) website, get your favorite makers completed todos, and send them on Telegram using a Telegram bot.
 

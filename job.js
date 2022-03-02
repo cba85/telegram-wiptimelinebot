@@ -11,7 +11,7 @@ const Db = require("./src/db.js");
   const users = await db.getUsers();
 
   for (user of users) {
-    const follows = await db.getMakers(user);
+    const follows = await db.getFollowers(user);
 
     let maxPage = 1;
     if (typeof process.argv[2] !== "undefined") {

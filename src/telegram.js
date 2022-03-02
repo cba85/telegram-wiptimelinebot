@@ -19,17 +19,15 @@ module.exports = class Telegram {
 
   // Commands
   listen(db) {
-    // Checking on every messages
-    this.bot.on("message", async (msg) => {
-      const user = await db.checkUser(msg.chat.id);
+    // /start
+    // Create a user on first-time launch
+    this.bot.onText(/\/start/, async (msg) => {
+      const user = await db.checkIfUserExists(msg.chat.id);
 
       if (!user) {
         const added = await db.createUser(msg.from);
       }
-    });
 
-    // /start
-    this.bot.onText(/\/start/, async (msg) => {
       this.bot.sendMessage(
         msg.chat.id,
         `Create your own <a href="https://wip.co">wip.co</a> todos timeline of your favorite makers.\n\nCommands:\n/list: list the makers you follow\n/follow @username: follow a maker\n/unfollow @username: unfollow a maker`,
@@ -38,6 +36,7 @@ module.exports = class Telegram {
     });
 
     // /debug
+    // Send Telegram chatid and username
     this.bot.onText(/\/debug/, async (msg) => {
       this.bot.sendMessage(
         msg.chat.id,
@@ -46,56 +45,79 @@ module.exports = class Telegram {
     });
 
     // /list
+    // Send followers list
     this.bot.onText(/\/list/, async (msg) => {
-      let follows = await db.getMakers(msg.chat.id);
-
-      let message = "";
+      let follows = await db.getFollowers(msg.chat.id);
 
       if (!follows.length) {
-        message = `😭 You don't follow any maker yet. Use "/follow @username" command to follow a wip.co maker.`;
-      } else {
-        message = `✌️ Makers you follow: ${follows.join(", ")}`;
+        return this.bot.sendMessage(
+          msg.chat.id,
+          `😭 You don't follow any maker yet. Use "/follow @username" command to follow a wip.co maker.`
+        );
       }
 
-      this.bot.sendMessage(msg.chat.id, message);
+      const message = `✌️ You are following ${
+        follows.length
+      } makers: ${follows.join(", ")}`;
+
+      return this.bot.sendMessage(msg.chat.id, message);
     });
 
     // /unfollow
+    // Unfollow a maker
     this.bot.onText(/\/unfollow (.+)/, async (msg, match) => {
       const username = match[1];
 
       const deleted = await db.unfollowMaker(msg.chat.id, username);
 
-      let message = `🙈 You've unfollowed ${username}`;
-
       if (!deleted) {
-        message = `🔴 Error: you don't follow ${username}.`;
+        return this.bot.sendMessage(
+          msg.chat.id,
+          `🔴 Error: you don't follow ${username}.`
+        );
       }
 
-      this.bot.sendMessage(msg.chat.id, message);
+      return this.bot.sendMessage(
+        msg.chat.id,
+        `🙈 You've unfollowed ${username}`
+      );
     });
 
     // /follow
+    // Follow a maker (limit to 10)
     this.bot.onText(/\/follow (.+)/, async (msg, match) => {
       const username = match[1];
 
-      let message = `👀 You now follow ${username}`;
-
+      // Check username format (@)
       if (!username.includes("@")) {
-        message = `🟠 Typo: use @${username}.`;
-      } else {
-        const added = await db.followMaker(msg.chat.id, username);
-
-        if (!added) {
-          message = `🔴 Error: you already follow ${username}.`;
-        }
+        return this.bot.sendMessage(msg.chat.id, `🟠 Typo: use @${username}.`);
       }
 
-      this.bot.sendMessage(msg.chat.id, message);
+      // Check followers count limit
+      const followersCount = await db.countFollowers(msg.chat.id);
+
+      if (followersCount >= 10) {
+        return this.bot.sendMessage(
+          msg.chat.id,
+          `😔 You can't follow more than 10 makers yet.`
+        );
+      }
+
+      // Check if user already follow this maker
+      const added = await db.followMaker(msg.chat.id, username);
+
+      if (!added) {
+        return this.bot.sendMessage(
+          msg.chat.id,
+          `🔴 Error: you already follow ${username}.`
+        );
+      }
+
+      return this.bot.sendMessage(msg.chat.id, `👀 You now follow ${username}`);
     });
   }
 
-  // Send Telegram Todo message
+  // Send Telegram message for a wip.co todo
   sendMessage(id, { body, username, images, videos }) {
     const message = `${username}: ${body}`;
 
@@ -113,7 +135,7 @@ module.exports = class Telegram {
       return;
     }
 
-    // Images
+    // Including images
     if (images.length) {
       for (let image of images) {
         try {
@@ -129,7 +151,7 @@ module.exports = class Telegram {
       return;
     }
 
-    // Videos
+    // Including videos
     if (videos.length) {
       for (let video of videos) {
         // Check Telegram video size limit (20mb)
@@ -140,7 +162,7 @@ module.exports = class Telegram {
           },
           (err, response) => {
             if (response.headers["content-length"] < 20000000) {
-              // Send video file on Telegram
+              // < 20 mb: send video file on Telegram
               try {
                 this.bot.sendVideo(id, video, {
                   caption: message,
@@ -150,7 +172,7 @@ module.exports = class Telegram {
                 console.log(error);
               }
             } else {
-              // Send video url on Telegram
+              // > 20mb: send video url on Telegram
               const videoMessage = `${username}: <a href="${video}">▶️ video</a> – ${body}`;
               try {
                 this.bot.sendMessage(id, videoMessage, {
