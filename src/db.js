@@ -144,4 +144,13 @@ module.exports = class Db {
 
     return res.rowCount;
   }
+
+  // Delete todos older than a week (7 days)
+  async cleanTodos() {
+    const res = await this.client.query(
+      "DELETE FROM todos WHERE created_at < now() - interval '7 days'"
+    );
+
+    return res.rowCount;
+  }
 };
