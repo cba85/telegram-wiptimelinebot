@@ -6,7 +6,6 @@ const Telegram = require("./src/telegram");
 const Db = require("./src/db.js");
 
 const db = new Db();
-db.connect();
 
 const telegramBot = new Telegram("webhook");
 telegramBot.listen(db);

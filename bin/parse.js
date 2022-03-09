@@ -5,7 +5,6 @@ const Db = require("../src/db.js");
 
 (async () => {
   const db = new Db();
-  db.connect();
 
   const telegramBot = new Telegram();
 

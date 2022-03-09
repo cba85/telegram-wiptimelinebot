@@ -74,11 +74,6 @@ module.exports = class Telegram {
       );
     });
 
-    // /unfollow (blank)
-    this.bot.onText(/\/unfollow/, async (msg) => {
-      this.bot.sendMessage(msg.chat.id, `Usage: /unfollow @username`);
-    });
-
     // /follow
     // Follow a maker (limit to 10)
     this.bot.onText(/\/follow (.+)/, async (msg, match) => {
@@ -110,11 +105,6 @@ module.exports = class Telegram {
       }
 
       return this.bot.sendMessage(msg.chat.id, `👀 You now follow ${username}`);
-    });
-
-    // /follow (blank)
-    this.bot.onText(/\/follow/, async (msg) => {
-      this.bot.sendMessage(msg.chat.id, `Usage: /follow @username`);
     });
   }
 

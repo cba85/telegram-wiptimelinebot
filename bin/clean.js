@@ -3,7 +3,6 @@ const Db = require("../src/db.js");
 
 (async () => {
 	const db = new Db();
-	db.connect();
 
 	const removedTodosCount = await db.cleanTodos();
 	console.log(`${removedTodosCount} todo(s) deleted.`);
