@@ -35,15 +35,6 @@ module.exports = class Telegram {
       );
     });
 
-    // /debug
-    // Send Telegram chatid and username
-    this.bot.onText(/\/debug/, async (msg) => {
-      this.bot.sendMessage(
-        msg.chat.id,
-        `chatId: ${msg.chat.id}\nusername: ${msg.chat.username}`
-      );
-    });
-
     // /list
     // Send followers list
     this.bot.onText(/\/list/, async (msg) => {
@@ -83,6 +74,11 @@ module.exports = class Telegram {
       );
     });
 
+    // /unfollow (blank)
+    this.bot.onText(/\/unfollow/, async (msg) => {
+      this.bot.sendMessage(msg.chat.id, `Usage: /unfollow @username`);
+    });
+
     // /follow
     // Follow a maker (limit to 10)
     this.bot.onText(/\/follow (.+)/, async (msg, match) => {
@@ -114,6 +110,11 @@ module.exports = class Telegram {
       }
 
       return this.bot.sendMessage(msg.chat.id, `👀 You now follow ${username}`);
+    });
+
+    // /follow (blank)
+    this.bot.onText(/\/follow/, async (msg) => {
+      this.bot.sendMessage(msg.chat.id, `Usage: /follow @username`);
     });
   }
 
