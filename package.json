@@ -11,6 +11,9 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "parse" "node bin/parse.js",
+    "clean": "node bin/clean.js",
+    "serve": "node main.js"
   }
 }

@@ -4,5 +4,5 @@ const Db = require("./src/db.js");
 
 const db = new Db();
 
-const telegramBot = new Telegram("polling");
-telegramBot.listen(db);
+const telegramBot = new Telegram("polling", db);
+telegramBot.listen();

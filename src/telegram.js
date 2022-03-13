@@ -2,7 +2,7 @@ const telegramBot = require("node-telegram-bot-api");
 const request = require("request");
 
 module.exports = class Telegram {
-  constructor(type = null) {
+  constructor(type = null, db) {
     if (!type) {
       this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN);
     } else if (type == "polling") {
@@ -14,18 +14,20 @@ module.exports = class Telegram {
       this.bot.setWebHook(process.env.APP_URL + this.bot.token);
     }
 
+    this.db = db;
+
     console.log(`Telegram bot server started in the ${type} mode`);
   }
 
   // Commands
-  listen(db) {
+  listen() {
     // /start
     // Create a user on first-time launch
     this.bot.onText(/\/start/, async (msg) => {
-      const user = await db.checkIfUserExists(msg.chat.id);
+      const user = await this.db.checkIfUserExists(msg.chat.id);
 
       if (!user) {
-        const added = await db.createUser(msg.from);
+        const added = await this.db.createUser(msg.from);
       }
 
       this.bot.sendMessage(
@@ -38,7 +40,7 @@ module.exports = class Telegram {
     // /list
     // Send followers list
     this.bot.onText(/\/list/, async (msg) => {
-      let follows = await db.getFollowers(msg.chat.id);
+      let follows = await this.db.getFollowers(msg.chat.id);
 
       if (!follows.length) {
         return this.bot.sendMessage(
@@ -59,7 +61,7 @@ module.exports = class Telegram {
     this.bot.onText(/\/unfollow (.+)/, async (msg, match) => {
       const username = match[1];
 
-      const deleted = await db.unfollowMaker(msg.chat.id, username);
+      const deleted = await this.db.unfollowMaker(msg.chat.id, username);
 
       if (!deleted) {
         return this.bot.sendMessage(
@@ -85,7 +87,7 @@ module.exports = class Telegram {
       }
 
       // Check followers count limit
-      const followersCount = await db.countFollowers(msg.chat.id);
+      const followersCount = await this.db.countFollowers(msg.chat.id);
 
       if (followersCount >= 10) {
         return this.bot.sendMessage(
@@ -95,7 +97,7 @@ module.exports = class Telegram {
       }
 
       // Check if user already follow this maker
-      const added = await db.followMaker(msg.chat.id, username);
+      const added = await this.db.followMaker(msg.chat.id, username);
 
       if (!added) {
         return this.bot.sendMessage(

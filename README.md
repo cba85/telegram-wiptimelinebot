@@ -37,7 +37,7 @@ Add your database and Telegram credentials into the `.env` file.
 
 > If using this script locally, comment `PGSSLMODE=no-verify`.
 
-Create a PostgreSQL table based on `schema.sql` file.
+Create a PostgreSQL table based on `db/wip_telegram.sql` file.
 
 ## Usage
 

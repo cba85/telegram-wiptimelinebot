@@ -47,7 +47,6 @@ exports.browse = async (follows, maxPage = 1) => {
             const imgElements = attachment.getElementsByTagName("img");
 
             if (imgElements.length) {
-              //const img = imgElements[0].getAttribute("src");
               const img = imgElements[0].dataset.zoomSrc; // Get high resolution image
               t.images.push(img);
             }

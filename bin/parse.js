@@ -6,7 +6,7 @@ const Db = require("../src/db.js");
 (async () => {
   const db = new Db();
 
-  const telegramBot = new Telegram();
+  const telegramBot = new Telegram(null, db);
 
   // Get users
   const users = await db.getUsers();
@@ -37,7 +37,7 @@ const Db = require("../src/db.js");
 
   // Kill scripts after some times to give telegram API time to send messages
   setTimeout(function () {
-    console.log("🤖✅ Parser job done");
+    console.log("🤖 Parser job done");
     process.exit();
-  }, 5000);
+  }, 10000);
 })();

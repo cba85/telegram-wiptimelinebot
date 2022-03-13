@@ -7,8 +7,8 @@ const Db = require("./src/db.js");
 
 const db = new Db();
 
-const telegramBot = new Telegram("webhook");
-telegramBot.listen(db);
+const telegramBot = new Telegram("webhook", db);
+telegramBot.listen();
 
 const app = express();
 app.use(bodyParser.json());

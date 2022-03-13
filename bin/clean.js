@@ -9,7 +9,7 @@ const Db = require("../src/db.js");
 
 	// Kill scripts after some times to give telegram API time to send messages
 	setTimeout(function () {
-		console.log("🤖✅ Clean todos older than a week job done");
+		console.log("🤖 Clean todos older than a week job done");
 		process.exit();
 	}, 5000);
 })();

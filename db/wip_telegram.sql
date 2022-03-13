@@ -4,7 +4,7 @@
 -- https://tableplus.com/
 --
 -- Database: wip_telegram
--- Generation Time: 2022-03-01 20:06:20.3430
+-- Generation Time: 2022-03-13 23:55:02.2120
 -- -------------------------------------------------------------
 
 
@@ -34,7 +34,7 @@ CREATE TABLE "public"."todos" (
     "todo_id" int4 NOT NULL,
     "videos" text,
     "created_at" timestamp(0) NOT NULL DEFAULT now(),
-    "user_id" varchar NOT NULL
+    "user_id" int4 NOT NULL
 );
 
 -- This script only contains the table creation statements and does not fully represent the table in the database. It's still missing: indices, triggers. Do not use it as a backup.
