@@ -6,15 +6,19 @@ Create your custom [WIP.co](https://wip.co/) completed todos timeline of your fa
 
 ---
 
-This is a simple script to parse [WIP.co](https://wip.co/) website, get your favorite makers completed todos, and send them on Telegram using a Telegram bot.
+This is a simple app to parse [WIP.co](https://wip.co/) website, get your favorite makers completed todos, and send them on Telegram using a Telegram bot.
 
-This script doesn't require an active account on the website because it doesn't use wip.co API, but scrap wip.co website instead using [pupeeter](https://pptr.dev/).
+This app doesn't require an active account on the website because it doesn't use wip.co API, but scrap wip.co website instead using [pupeeter](https://pptr.dev/).
 
-This scripts contains 3 entry points:
+This app contains 2 entry points:
 
 -   `index.js`: Telegram bot listener using webhooks (for Heroku deployment)
--   `job.js`: WIP.co parser using pupeeter to send your favorite makers completed todos on Telegram
 -   `main.js`: Telegram bot listener using polling (for local environment)
+
+It also contains 2 scripts located in `bin/` folder:
+
+-   `clean.js`: remove todos saved in database older than a week to clean database
+-   `parse.js`: scraper to parse [WIP.co] todos
 
 ## Requirements
 
@@ -52,7 +56,7 @@ In your Telegram bot, add usernames you want to follow using `/follow @username`
 Then launch the script to parse and get [WIP.co](https://wip.co/) todos of these users inside your Telegram bot:
 
 ```
-$ node job.js [MAX_PAGE_TO_SCRAP]
+$ node bin.parse.js [MAX_PAGE_TO_SCRAP]
 ```
 
 Default max page to scrap is 1.
@@ -98,7 +102,9 @@ Your app is now ready.
 
 You should now open Heroku console and launch `heroku run node job.js` to test your app and start to parse some updates from your favorite makers. Don't forget to add usernames you want to follow in your Telegram bot using `/follow @username` command.
 
-When the app works correctly, add Heroku scheduler addon and create a job every 10 min (or hours) to receive updates on your Telegram bot automatically.
+When the app works correctly, add Heroku scheduler addon and create a job every 10 min (or hours) for `bin/parse.js` to receive updates on your Telegram bot automatically.
+
+Add also a daily cron job for `bin/clean.js` to maintain a clean database.
 
 ### Resources
 

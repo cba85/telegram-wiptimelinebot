@@ -1,5 +1,6 @@
 const telegramBot = require("node-telegram-bot-api");
 const request = require("request");
+const axios = require("axios");
 
 module.exports = class Telegram {
   constructor(type = null, db) {
@@ -111,33 +112,45 @@ module.exports = class Telegram {
   }
 
   // Send Telegram message for a wip.co todo
-  sendMessage(id, { body, username, images, videos }) {
+  async sendMessage(id, { body, username, images, videos }) {
     const message = `${username}: ${body}`;
 
-    // Text
-    if (!images.length && !videos.length) {
-      try {
-        this.bot.sendMessage(id, message, {
-          parse_mode: "html",
-          disable_web_page_preview: true,
-        });
-      } catch (error) {
-        console.log(error);
-      }
-
-      return;
-    }
+    const reply = await this.bot.sendMessage(id, message, {
+      parse_mode: "html",
+      disable_web_page_preview: true,
+    });
 
     // Including images
     if (images.length) {
       for (let image of images) {
-        try {
-          this.bot.sendPhoto(id, image, {
-            caption: message,
-            parse_mode: "html",
-          });
-        } catch (error) {
-          console.log(error);
+        // Check if image is in webp format hidden in jpg format
+        // https://stackoverflow.com/questions/56615412/how-to-detect-webp-file-behind-png-link
+
+        const res = await axios.request({
+          url: image,
+          method: "get",
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",
+          },
+        });
+
+        if (res.headers["content-type"] == "image/webp") {
+          try {
+            await this.bot.sendSticker(id, image, {
+              reply_to_message_id: reply.message_id,
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        } else {
+          try {
+            await this.bot.sendPhoto(id, image, {
+              reply_to_message_id: reply.message_id,
+            });
+          } catch (error) {
+            console.log(error);
+          }
         }
       }
 
@@ -148,36 +161,31 @@ module.exports = class Telegram {
     if (videos.length) {
       for (let video of videos) {
         // Check Telegram video size limit (20mb)
-        request(
-          {
-            url: video,
-            method: "HEAD",
-          },
-          (err, response) => {
-            if (response.headers["content-length"] < 20000000) {
-              // < 20 mb: send video file on Telegram
-              try {
-                this.bot.sendVideo(id, video, {
-                  caption: message,
-                  parse_mode: "html",
-                });
-              } catch (error) {
-                console.log(error);
-              }
-            } else {
-              // > 20mb: send video url on Telegram
-              const videoMessage = `${username}: <a href="${video}">▶️ video</a> – ${body}`;
-              try {
-                this.bot.sendMessage(id, videoMessage, {
-                  parse_mode: "html",
-                  disable_web_page_preview: true,
-                });
-              } catch (error) {
-                console.log(error);
-              }
-            }
+        const res = await axios.request({
+          url: video,
+          method: "HEAD",
+        });
+
+        // < 20 mb: send video file on Telegram
+        if (res.headers["content-length"] < 20000000) {
+          try {
+            await this.bot.sendVideo(id, video, {
+              reply_to_message_id: reply.message_id,
+            });
+          } catch (error) {
+            console.log(error);
           }
-        );
+        } else {
+          // > 20mb: send video url on Telegram
+          const videoMessage = `${username}: <a href="${video}">▶️ video</a> – ${body}`;
+          try {
+            await this.bot.sendMessage(id, videoMessage, {
+              reply_to_message_id: reply.message_id,
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        }
 
         return;
       }

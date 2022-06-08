@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const Db = require("../src/db.js");
 
 (async () => {
