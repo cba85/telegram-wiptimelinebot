@@ -29,10 +29,10 @@ const Db = require("../src/db.js");
       const exists = await db.existsTodo(user, todo.id);
 
       // Save todo and send it to Telegram if new
-      //if (!exists) {
-      await db.saveTodo(user, todo);
-      telegramBot.sendMessage(user, todo);
-      //}
+      if (!exists) {
+        await db.saveTodo(user, todo);
+        telegramBot.sendMessage(user, todo);
+      }
     }
   }
 
