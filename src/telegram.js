@@ -113,7 +113,7 @@ module.exports = class Telegram {
 
   // Send Telegram message for a wip.co todo
   async sendMessage(id, { body, username, images, videos }) {
-    const message = `${username}: ${body}`;
+    const message = `<a href="https://wip.co/${username}">${username}</a>: ${body}`;
 
     const reply = await this.bot.sendMessage(id, message, {
       parse_mode: "html",
@@ -124,8 +124,6 @@ module.exports = class Telegram {
     if (images.length) {
       for (let image of images) {
         // Check if image is in webp format hidden in jpg format
-        // https://stackoverflow.com/questions/56615412/how-to-detect-webp-file-behind-png-link
-
         const res = await axios.request({
           url: image,
           method: "get",
