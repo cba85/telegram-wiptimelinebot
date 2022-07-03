@@ -112,10 +112,10 @@ module.exports = class Telegram {
   }
 
   // Send Telegram message for a wip.co todo
-  async sendMessage(id, { body, username, images, videos }) {
-    const message = `<a href="https://wip.co/${username}">${username}</a>: ${body}`;
+  async sendMessage(chatId, { id, body, username, images, videos }) {
+    const message = `<a href="https://wip.co/${username}">${username}</a>: ${body}\n🔗 <a href="https://wip.co/todos/${id}">Link</a>`;
 
-    const reply = await this.bot.sendMessage(id, message, {
+    const reply = await this.bot.sendMessage(chatId, message, {
       parse_mode: "html",
       disable_web_page_preview: true,
     });
@@ -129,25 +129,35 @@ module.exports = class Telegram {
           method: "get",
           headers: {
             "User-Agent":
-              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",
+              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.53 Safari/537.36",
           },
         });
 
+        //console.log(`📸 Photo: ${res.headers["content-type"]}\n${image}`);
+
         if (res.headers["content-type"] == "image/webp") {
           try {
-            await this.bot.sendSticker(id, image, {
+            await this.bot.sendSticker(chatId, image, {
               reply_to_message_id: reply.message_id,
             });
           } catch (error) {
-            console.log(error);
+            console.log(
+              `❌ Sticker\n${error.response.body.description}\n${image}`
+            );
           }
         } else {
           try {
-            await this.bot.sendPhoto(id, image, {
+            await this.bot.sendPhoto(chatId, image, {
               reply_to_message_id: reply.message_id,
             });
           } catch (error) {
-            console.log(error);
+            console.log(
+              `❌ Photo\n${error.response.body.description}\n${image}`
+            );
+            // Send photo as a sticker if error
+            await this.bot.sendSticker(chatId, image, {
+              reply_to_message_id: reply.message_id,
+            });
           }
         }
       }
@@ -167,21 +177,25 @@ module.exports = class Telegram {
         // < 20 mb: send video file on Telegram
         if (res.headers["content-length"] < 20000000) {
           try {
-            await this.bot.sendVideo(id, video, {
+            await this.bot.sendVideo(chatId, video, {
               reply_to_message_id: reply.message_id,
             });
           } catch (error) {
-            console.log(error);
+            console.log(
+              `❌ Video\n${error.response.body.description}\n${video}`
+            );
           }
         } else {
           // > 20mb: send video url on Telegram
           const videoMessage = `${username}: <a href="${video}">▶️ video</a> – ${body}`;
           try {
-            await this.bot.sendMessage(id, videoMessage, {
+            await this.bot.sendMessage(chatId, videoMessage, {
               reply_to_message_id: reply.message_id,
             });
           } catch (error) {
-            console.log(error);
+            console.log(
+              `❌ Video url\n${error.response.body.description}\n${video}`
+            );
           }
         }
 

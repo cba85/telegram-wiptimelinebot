@@ -24,6 +24,12 @@ const Db = require("../src/db.js");
     // Get todos from the makers followed by the current user
     const todos = await browse(follows, maxPage);
 
+    // Debug todos
+    //console.log(todos);
+
+    console.log(`${todos.length} todos retrieved for user ${user}.`);
+
+    let countTodosSent = 0;
     for (key in todos) {
       const todo = todos[key];
       const exists = await db.existsTodo(user, todo.id);
@@ -32,8 +38,11 @@ const Db = require("../src/db.js");
       if (!exists) {
         await db.saveTodo(user, todo);
         telegramBot.sendMessage(user, todo);
+        countTodosSent++;
       }
     }
+
+    console.log(`${countTodosSent} todos sent to user ${user}.`);
   }
 
   // Kill scripts after some times to give telegram API time to send messages
