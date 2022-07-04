@@ -112,16 +112,16 @@ module.exports = class Telegram {
 
   // Send Telegram message for a wip.co todo
   async sendMessage(chatId, todo) {
-    const messageId = sendMessage(this.bot, chatId, todo);
+    const reply = await sendMessage(this.bot, chatId, todo);
 
     // Including images
     if (todo.images.length) {
-      sendPhoto(this.bot, chatId, messageId, todo);
+      await sendPhoto(this.bot, chatId, reply, todo);
     }
 
     // Including videos
     if (todo.videos.length) {
-      sendVideo(this.bot, chatId, messageId, todo);
+      await sendVideo(this.bot, chatId, reply, todo);
     }
   }
 };
