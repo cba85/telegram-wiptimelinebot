@@ -1,6 +1,5 @@
 const telegramBot = require("node-telegram-bot-api");
-const request = require("request");
-const axios = require("axios");
+const { sendPhoto, sendVideo, sendMessage } = require("../src/send.js");
 
 module.exports = class Telegram {
   constructor(type = null, db) {
@@ -112,95 +111,17 @@ module.exports = class Telegram {
   }
 
   // Send Telegram message for a wip.co todo
-  async sendMessage(chatId, { id, body, username, images, videos }) {
-    const message = `<a href="https://wip.co/${username}">${username}</a>: ${body}\n🔗 <a href="https://wip.co/todos/${id}">Link</a>`;
-
-    const reply = await this.bot.sendMessage(chatId, message, {
-      parse_mode: "html",
-      disable_web_page_preview: true,
-    });
+  async sendMessage(chatId, todo) {
+    const messageId = sendMessage(this.bot, chatId, todo);
 
     // Including images
-    if (images.length) {
-      for (let image of images) {
-        // Check if image is in webp format hidden in jpg format
-        const res = await axios.request({
-          url: image,
-          method: "get",
-          headers: {
-            "User-Agent":
-              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.53 Safari/537.36",
-          },
-        });
-
-        //console.log(`📸 Photo: ${res.headers["content-type"]}\n${image}`);
-
-        if (res.headers["content-type"] == "image/webp") {
-          try {
-            await this.bot.sendSticker(chatId, image, {
-              reply_to_message_id: reply.message_id,
-            });
-          } catch (error) {
-            console.log(
-              `❌ Sticker\n${error.response.body.description}\n${image}`
-            );
-          }
-        } else {
-          try {
-            await this.bot.sendPhoto(chatId, image, {
-              reply_to_message_id: reply.message_id,
-            });
-          } catch (error) {
-            console.log(
-              `❌ Photo\n${error.response.body.description}\n${image}`
-            );
-            // Send photo as a sticker if error
-            await this.bot.sendSticker(chatId, image, {
-              reply_to_message_id: reply.message_id,
-            });
-          }
-        }
-      }
-
-      return;
+    if (todo.images.length) {
+      sendPhoto(this.bot, chatId, messageId, todo);
     }
 
     // Including videos
-    if (videos.length) {
-      for (let video of videos) {
-        // Check Telegram video size limit (20mb)
-        const res = await axios.request({
-          url: video,
-          method: "HEAD",
-        });
-
-        // < 20 mb: send video file on Telegram
-        if (res.headers["content-length"] < 20000000) {
-          try {
-            await this.bot.sendVideo(chatId, video, {
-              reply_to_message_id: reply.message_id,
-            });
-          } catch (error) {
-            console.log(
-              `❌ Video\n${error.response.body.description}\n${video}`
-            );
-          }
-        } else {
-          // > 20mb: send video url on Telegram
-          const videoMessage = `${username}: <a href="${video}">▶️ video</a> – ${body}`;
-          try {
-            await this.bot.sendMessage(chatId, videoMessage, {
-              reply_to_message_id: reply.message_id,
-            });
-          } catch (error) {
-            console.log(
-              `❌ Video url\n${error.response.body.description}\n${video}`
-            );
-          }
-        }
-
-        return;
-      }
+    if (todo.videos.length) {
+      sendVideo(this.bot, chatId, messageId, todo);
     }
   }
 };

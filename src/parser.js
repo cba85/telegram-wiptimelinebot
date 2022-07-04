@@ -33,7 +33,6 @@ exports.browse = async (follows, maxPage = 1) => {
             t.videos = [];
             t.id = element.dataset.todoId;
             t.username = username;
-            //t.attachments = [];
 
             // Get todo body
             let body = element.getElementsByClassName("text-lg")[0].innerHTML;
@@ -41,16 +40,14 @@ exports.browse = async (follows, maxPage = 1) => {
             // Remove images in body
             t.body = body.replace(/<img .*?>/g, "");
 
-            // Get todo attachments
-            const attachments = element.getElementsByClassName(
+            // Get todo images
+            const images = element.getElementsByClassName(
               "grid grid-flow-row-dense gap-0.5"
             );
 
-            for (const attachment of attachments) {
-              //t.attachments.push(attachment.innerHTML);
-
+            for (const image of images) {
               // Get images
-              const imgElements = attachment.getElementsByTagName("img");
+              const imgElements = image.getElementsByTagName("img");
 
               for (const imgElement of imgElements) {
                 // Get high res images
@@ -58,15 +55,20 @@ exports.browse = async (follows, maxPage = 1) => {
                 const maxSrcset = srcset[srcset.length - 1].trim().split(" ");
                 t.images.push(maxSrcset[0]);
               }
+            }
 
-              //TODOS: Get videos
-              /*
-              const videoElements = attachment.getElementsByTagName("source");
-              if (videoElements.length) {
-                const video = videoElements[0].getAttribute("src");
-                t.videos.push(video);
+            // Get todo videos
+            const videos = element.getElementsByClassName(
+              "flex flex-col gap-1"
+            );
+
+            for (const video of videos) {
+              // Get videos
+              const videoElements = video.getElementsByTagName("source");
+
+              for (const videoElement of videoElements) {
+                t.videos.push(videoElement.getAttribute("src"));
               }
-              */
             }
 
             todos.push(t);
