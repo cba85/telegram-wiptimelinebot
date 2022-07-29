@@ -42,9 +42,15 @@ exports.sendPhoto = async (bot, chatId, reply, { images }) => {
       } catch (error) {
         console.log(`❌ Photo\n${error.response.body.description}\n${image}`);
         // Send photo as a sticker if error
-        await bot.sendSticker(chatId, image, {
-          reply_to_message_id: reply.message_id,
-        });
+        try {
+          await bot.sendSticker(chatId, image, {
+            reply_to_message_id: reply.message_id,
+          });
+        } catch (error) {
+          console.log(
+            `❌ Sticker\n${error.response.body.description}\n${image}`
+          );
+        }
       }
     }
   }

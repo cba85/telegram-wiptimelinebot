@@ -13,8 +13,10 @@ const Db = require("../src/db.js");
   const users = await db.getUsers();
 
   for (user of users) {
+    console.log(`User ${user.username} #${user.id}`);
+
     // Get the followers of the current user
-    const follows = await db.getFollowers(user);
+    const follows = await db.getFollowers(user.id);
 
     let maxPage = 1;
     if (typeof process.argv[2] !== "undefined") {
@@ -27,22 +29,22 @@ const Db = require("../src/db.js");
     // Debug todos
     //console.log(todos);
 
-    console.log(`${todos.length} todos retrieved for user ${user}.`);
+    console.log(`${todos.length} todos retrieved`);
 
     let countTodosSent = 0;
     for (key in todos) {
       const todo = todos[key];
-      const exists = await db.existsTodo(user, todo.id);
+      const exists = await db.existsTodo(user.id, todo.id);
 
       // Save todo and send it to Telegram if new
       if (!exists) {
-        await db.saveTodo(user, todo);
-        telegramBot.sendMessage(user, todo);
+        await db.saveTodo(user.id, todo);
+        telegramBot.sendMessage(user.id, todo);
         countTodosSent++;
       }
     }
 
-    console.log(`${countTodosSent} todos sent to user ${user}.`);
+    console.log(`${countTodosSent} todos sent`);
   }
 
   // Kill scripts after some times to give telegram API time to send messages

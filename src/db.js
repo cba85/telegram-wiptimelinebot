@@ -26,11 +26,10 @@ module.exports = class Db {
   // Get all Telegram users (used for checking WIP.co todos)
   async getUsers() {
     const res = await this.pool.query({
-      rowMode: "array",
-      text: "SELECT id from users",
+      text: "SELECT * from users",
     });
 
-    return res.rows.map((item) => item[0]);
+    return res.rows;
   }
 
   // Create a user in database from Telegram

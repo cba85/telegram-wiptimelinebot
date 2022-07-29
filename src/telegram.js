@@ -27,7 +27,7 @@ module.exports = class Telegram {
       const user = await this.db.checkIfUserExists(msg.chat.id);
 
       if (!user) {
-        const added = await this.db.createUser(msg.from);
+        await this.db.createUser(msg.from);
       }
 
       this.bot.sendMessage(
