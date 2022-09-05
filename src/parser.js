@@ -37,6 +37,10 @@ exports.browse = async (follows, maxPage = 1) => {
             // Get todo body
             let body = element.getElementsByClassName("text-lg")[0].innerHTML;
 
+            // Remove style HTML tag on WIp project tag that cannot be send to Telegram
+            const regex = /<style>(.|\n)*?<\/style>/gm;
+            body = body.replace(regex, "");
+
             // Remove images in body
             t.body = body.replace(/<img .*?>/g, "");
 

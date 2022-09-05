@@ -5,6 +5,7 @@ const Telegram = require("../src/telegram");
 const Db = require("../src/db.js");
 
 (async () => {
+  console.log(`🤖 Start WIP.co parser`);
   const db = new Db();
 
   const telegramBot = new Telegram(null, db);
@@ -13,7 +14,7 @@ const Db = require("../src/db.js");
   const users = await db.getUsers();
 
   for (user of users) {
-    console.log(`User ${user.username} #${user.id}`);
+    console.log(`👋 User ${user.username} #${user.id}`);
 
     // Get the followers of the current user
     const follows = await db.getFollowers(user.id);
@@ -29,7 +30,7 @@ const Db = require("../src/db.js");
     // Debug todos
     //console.log(todos);
 
-    console.log(`${todos.length} todos retrieved`);
+    console.log(`👀 ${todos.length} todos retrieved for this user`);
 
     let countTodosSent = 0;
     for (key in todos) {
@@ -41,15 +42,18 @@ const Db = require("../src/db.js");
         await db.saveTodo(user.id, todo);
         telegramBot.sendMessage(user.id, todo);
         countTodosSent++;
+        console.log(
+          `🟠 ${countTodosSent} Try to send ${todo.username}: ${todo.body}`
+        );
       }
     }
 
-    console.log(`${countTodosSent} todos sent`);
+    console.log(`💬 ${countTodosSent} todos sent`);
   }
 
   // Kill scripts after some times to give telegram API time to send messages
   setTimeout(function () {
-    console.log("🤖 Parser job done");
+    console.log("✅ Parser job done");
     process.exit();
   }, 10000);
 })();
