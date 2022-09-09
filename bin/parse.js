@@ -14,7 +14,7 @@ const Db = require("../src/db.js");
   const users = await db.getUsers();
 
   for (user of users) {
-    console.log(`👋 User ${user.username} #${user.id}`);
+    console.log(`👋 User: ${user.username} #${user.id}`);
 
     // Get the followers of the current user
     const follows = await db.getFollowers(user.id);
@@ -42,13 +42,14 @@ const Db = require("../src/db.js");
         await db.saveTodo(user.id, todo);
         telegramBot.sendMessage(user.id, todo);
         countTodosSent++;
+        console.log(`💬 ${countTodosSent} | ${todo.username}: ${todo.body}`);
         console.log(
-          `🟠 ${countTodosSent} Try to send ${todo.username}: ${todo.body}`
+          `${todo.images.length} photo(s) + ${todo.videos.length} video(s)`
         );
       }
     }
 
-    console.log(`💬 ${countTodosSent} todos sent`);
+    console.log(`💬 ${countTodosSent} todos sent to Telegram`);
   }
 
   // Kill scripts after some times to give telegram API time to send messages

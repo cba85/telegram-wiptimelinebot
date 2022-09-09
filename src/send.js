@@ -26,31 +26,47 @@ exports.sendPhoto = async (bot, chatId, reply, { images }) => {
 
     //console.log(`📸 Photo: ${res.headers["content-type"]}\n${image}`);
 
+    // Webp = send Telegram sticker
     if (res.headers["content-type"] == "image/webp") {
       try {
         await bot.sendSticker(chatId, image, {
           reply_to_message_id: reply.message_id,
         });
       } catch (error) {
-        console.log(`❌ Sticker\n${error.response.body.description}\n${image}`);
+        console.log(
+          `🔴🎫 Sticker\n${error.response.body.description}\n${image}`
+        );
+
+        // Send a message with image link if error when sending on Telegram
+        return await bot.sendMessage(
+          chatId,
+          `📷 🔴 Can't send picture. <a href="${image}">See in browser instead</a>`,
+          {
+            reply_to_message_id: reply.message_id,
+            parse_mode: "html",
+            disable_web_page_preview: true,
+          }
+        );
       }
-    } else {
+      return;
+    }
+
+    // Jpeg = send Telegram photo
+    try {
+      await bot.sendPhoto(chatId, image, {
+        reply_to_message_id: reply.message_id,
+      });
+    } catch (error) {
+      console.log(`🔴📷 Photo\n${error.response.body.description}\n${image}`);
+      // Send photo as a sticker if error
       try {
-        await bot.sendPhoto(chatId, image, {
+        await bot.sendSticker(chatId, image, {
           reply_to_message_id: reply.message_id,
         });
       } catch (error) {
-        console.log(`❌ Photo\n${error.response.body.description}\n${image}`);
-        // Send photo as a sticker if error
-        try {
-          await bot.sendSticker(chatId, image, {
-            reply_to_message_id: reply.message_id,
-          });
-        } catch (error) {
-          console.log(
-            `❌ Sticker\n${error.response.body.description}\n${image}`
-          );
-        }
+        console.log(
+          `🔴🎫 Sticker instead photo\n${error.response.body.description}\n${image}`
+        );
       }
     }
   }
@@ -73,7 +89,7 @@ exports.sendVideo = async (bot, chatId, reply, { videos }) => {
           reply_to_message_id: reply.message_id,
         });
       } catch (error) {
-        console.log(`❌ Video\n${error.response.body.description}\n${video}`);
+        console.log(`🔴📹 Video\n${error.response.body.description}\n${video}`);
       }
     } else {
       // > 20mb: send video url on Telegram
@@ -84,7 +100,7 @@ exports.sendVideo = async (bot, chatId, reply, { videos }) => {
         });
       } catch (error) {
         console.log(
-          `❌ Video url\n${error.response.body.description}\n${video}`
+          `🔴📹 Video url\n${error.response.body.description}\n${video}`
         );
       }
     }

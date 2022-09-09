@@ -37,9 +37,20 @@ exports.browse = async (follows, maxPage = 1) => {
             // Get todo body
             let body = element.getElementsByClassName("text-lg")[0].innerHTML;
 
-            // Remove style HTML tag on WIp project tag that cannot be send to Telegram
-            const regex = /<style>(.|\n)*?<\/style>/gm;
-            body = body.replace(regex, "");
+            // Remove useless HTML tag to avoid problems when sending messages on Telegram
+            const regexStyle = /<style>(.|\n)*?<\/style>/gm;
+            const regexClass = /class="(.|\n)*?"/gm;
+            const regexStyle2 = /style="(.|\n)*?"/gm;
+            const regexDataHovercardUrlValue =
+              /data-hovercard-url-value="(.|\n)*?"/gm;
+            body = body.replace(regexStyle, "");
+            body = body.replace(regexClass, "");
+            body = body.replace(regexStyle2, "");
+            body = body.replace(regexDataHovercardUrlValue, "");
+            body = body.replaceAll(`<span >`, "");
+            body = body.replaceAll(`</span>`, "");
+            body = body.replaceAll(`data-controller="hovercard"`, "");
+            body = body.replace(/ +(?= )/g, "");
 
             // Remove images in body
             t.body = body.replace(/<img .*?>/g, "");
