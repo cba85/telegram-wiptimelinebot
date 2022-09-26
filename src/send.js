@@ -2,7 +2,7 @@ const axios = require("axios");
 
 // Send Telegram message text
 exports.sendMessage = async (bot, chatId, { id, username, body }) => {
-  const message = `<a href="https://wip.co/${username}">${username}</a>: ${body}\n🔗 <a href="https://wip.co/todos/${id}">Link</a>`;
+  const message = `<a href="https://wip.co/${username}">${username}</a>: ${body}\n<a href="https://wip.co/todos/${id}">Link</a>`;
 
   return await bot.sendMessage(chatId, message, {
     parse_mode: "html",

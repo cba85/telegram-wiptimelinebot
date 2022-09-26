@@ -21,9 +21,9 @@ exports.browse = async (follows, maxPage = 1) => {
         // Parse todos
         for (const element of elements) {
           // Get todo username
-          const username = element.getElementsByClassName(
+          let username = element.getElementsByClassName(
             "font-sm text-gray-500"
-          )[0].innerHTML;
+          )[0].textContent;
 
           // Check if the todos belongs to an user followed
           if (follows.includes(username)) {
@@ -34,15 +34,17 @@ exports.browse = async (follows, maxPage = 1) => {
             t.id = element.dataset.todoId;
             t.username = username;
 
+            // Regexes
+            const regexDataHovercardUrlValue =
+              /data-hovercard-url-value="(.|\n)*?"/gm;
+            const regexStyle = /<style>(.|\n)*?<\/style>/gm;
+            const regexClass = /class="(.|\n)*?"/gm;
+            const regexStyle2 = /style="(.|\n)*?"/gm;
+
             // Get todo body
             let body = element.getElementsByClassName("text-lg")[0].innerHTML;
 
             // Remove useless HTML tag to avoid problems when sending messages on Telegram
-            const regexStyle = /<style>(.|\n)*?<\/style>/gm;
-            const regexClass = /class="(.|\n)*?"/gm;
-            const regexStyle2 = /style="(.|\n)*?"/gm;
-            const regexDataHovercardUrlValue =
-              /data-hovercard-url-value="(.|\n)*?"/gm;
             body = body.replace(regexStyle, "");
             body = body.replace(regexClass, "");
             body = body.replace(regexStyle2, "");
@@ -50,6 +52,7 @@ exports.browse = async (follows, maxPage = 1) => {
             body = body.replaceAll(`<span >`, "");
             body = body.replaceAll(`</span>`, "");
             body = body.replaceAll(`data-controller="hovercard"`, "");
+            body = body.replaceAll(`rel="nofollow noopener"`, "");
             body = body.replace(/ +(?= )/g, "");
 
             // Remove images in body

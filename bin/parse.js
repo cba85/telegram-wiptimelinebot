@@ -18,6 +18,7 @@ const Db = require("../src/db.js");
 
     // Get the followers of the current user
     const follows = await db.getFollowers(user.id);
+    //console.log(follows);
 
     let maxPage = 1;
     if (typeof process.argv[2] !== "undefined") {
@@ -29,6 +30,7 @@ const Db = require("../src/db.js");
 
     // Debug todos
     //console.log(todos);
+    //return;
 
     console.log(`👀 ${todos.length} todos retrieved for this user`);
 
@@ -44,7 +46,7 @@ const Db = require("../src/db.js");
         countTodosSent++;
         console.log(`💬 ${countTodosSent} | ${todo.username}: ${todo.body}`);
         console.log(
-          `${todo.images.length} photo(s) + ${todo.videos.length} video(s)`
+          `${todo.images.length} photos + ${todo.videos.length} videos`
         );
       }
     }

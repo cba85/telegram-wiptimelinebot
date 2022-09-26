@@ -32,6 +32,19 @@ module.exports = class Db {
     return res.rows;
   }
 
+  // Get user by Telegram user id
+  async getUser(id) {
+    const res = await this.pool.query("SELECT * from users WHERE id = $1", [
+      id,
+    ]);
+
+    if (!res.rowCount) {
+      return false;
+    }
+
+    return res.rows[0];
+  }
+
   // Create a user in database from Telegram
   async createUser(user) {
     const res = await this.pool.query(

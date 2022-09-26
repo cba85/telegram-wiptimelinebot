@@ -1,5 +1,7 @@
 const telegramBot = require("node-telegram-bot-api");
-const { sendPhoto, sendVideo, sendMessage } = require("../src/send.js");
+const { sendPhoto, sendVideo, sendMessage } = require("./send");
+const { browse } = require("./parser");
+const Db = require("./db");
 
 module.exports = class Telegram {
   constructor(type = null, db) {
@@ -32,9 +34,47 @@ module.exports = class Telegram {
 
       this.bot.sendMessage(
         msg.chat.id,
-        `Create your own <a href="https://wip.co">wip.co</a> todos timeline of your favorite makers.\n\nCommands:\n/list: list the makers you follow\n/follow @username: follow a maker\n/unfollow @username: unfollow a maker`,
+        `Create your own <a href="https://wip.co">wip.co</a> todos timeline of your favorite makers.\n\nCommands:\n/list: list the makers you follow\n/follow @username: follow a maker\n/unfollow @username: unfollow a maker\n/debug: see parser logs`,
         { parse_mode: "HTML" }
       );
+    });
+
+    // /debug
+    this.bot.onText(/\/debug/, async (msg) => {
+      const db = new Db();
+
+      // Get current user
+      const user = await db.getUser(msg.chat.id);
+
+      let message = `\n👋 User: ${user.username} #${user.id}`;
+
+      // Get the followers of the current user
+      const follows = await db.getFollowers(user.id);
+      message += `\n👀 Follows: `;
+      for (const follow of follows) {
+        message += `${follow} `;
+      }
+
+      const maxPage = 1;
+
+      // Get todos from the makers followed by the current user
+      const todos = await browse(follows, maxPage);
+
+      message += `\n⬇️ ${todos.length} todos retrieved`;
+
+      let countTodosSent = 0;
+      for (const key in todos) {
+        const todo = todos[key];
+        const exists = await db.existsTodo(user.id, todo.id);
+
+        if (!exists) {
+          countTodosSent++;
+        }
+      }
+
+      message += `\n💬 ${countTodosSent} new todos has to be send to Telegram`;
+
+      return this.bot.sendMessage(msg.chat.id, message);
     });
 
     // /list
