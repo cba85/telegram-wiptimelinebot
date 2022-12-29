@@ -4,9 +4,9 @@ module.exports = class Mysql {
   constructor() {
     return (async () => {
       if (process.env.APP_ENV == "heroku") {
-        this.conn = await mariadb.createConnection({
-          host: process.env.JAWSDB_MARIA_URL,
-        });
+        this.conn = await mariadb.createConnection(
+          process.env.JAWSDB_MARIA_URL
+        );
       } else {
         this.conn = await mariadb.createConnection({
           host: process.env.MYSQLHOST,

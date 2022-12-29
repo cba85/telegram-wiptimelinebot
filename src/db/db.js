@@ -6,15 +6,15 @@ module.exports = class Db {
 
   constructor() {
     return (async () => {
-      const availableDrivers = ["MYSQL", "PGSQL"];
+      const availableDrivers = ["mysql", "pgsql"];
 
       if (!availableDrivers.includes(process.env.DATABASE_DRIVER)) {
-        throw new Error("Invalid database driver (MYSQL or PGSQL)");
+        throw new Error("Invalid database driver (mysql or pgsql)");
       }
 
-      if (process.env.DATABASE_DRIVER == "MYSQL") {
+      if (process.env.DATABASE_DRIVER == "mysql") {
         this.db = await new Mysql();
-      } else if (process.env.DATABASE_DRIVER == "PGSQL") {
+      } else if (process.env.DATABASE_DRIVER == "pgsql") {
         this.db = await new Pgsql();
       }
 
