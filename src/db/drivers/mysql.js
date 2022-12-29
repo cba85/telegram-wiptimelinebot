@@ -3,12 +3,18 @@ const mariadb = require("mariadb");
 module.exports = class Mysql {
   constructor() {
     return (async () => {
-      this.conn = await mariadb.createConnection({
-        host: process.env.MYSQLHOST,
-        user: process.env.MYSQLUSER,
-        password: process.env.MYSQLPASSWORD,
-        database: process.env.MYSQLDATABASE,
-      });
+      if (process.env.APP_ENV == "heroku") {
+        this.conn = await mariadb.createConnection({
+          host: process.env.JAWSDB_MARIA_URL,
+        });
+      } else {
+        this.conn = await mariadb.createConnection({
+          host: process.env.MYSQLHOST,
+          user: process.env.MYSQLUSER,
+          password: process.env.MYSQLPASSWORD,
+          database: process.env.MYSQLDATABASE,
+        });
+      }
 
       return this;
     })();
