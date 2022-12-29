@@ -1,8 +1,10 @@
 require("dotenv").config();
 const Telegram = require("./src/telegram");
-const Db = require("./src/db.js");
+const Db = require("./src/db/db");
 
-const db = new Db();
+(async () => {
+  const db = await new Db();
 
-const telegramBot = new Telegram("polling", db);
-telegramBot.listen();
+  const telegramBot = new Telegram("polling", db);
+  telegramBot.listen();
+})();

@@ -1,7 +1,7 @@
 const telegramBot = require("node-telegram-bot-api");
 const { sendPhoto, sendVideo, sendMessage } = require("./send");
 const { browse } = require("./parser");
-const Db = require("./db");
+const Db = require("./db/db");
 
 module.exports = class Telegram {
   constructor(type = null, db) {
@@ -41,7 +41,7 @@ module.exports = class Telegram {
 
     // /debug
     this.bot.onText(/\/debug/, async (msg) => {
-      const db = new Db();
+      const db = await new Db();
 
       // Get current user
       const user = await db.getUser(msg.chat.id);
@@ -81,6 +81,8 @@ module.exports = class Telegram {
     // Send followers list
     this.bot.onText(/\/list/, async (msg) => {
       let follows = await this.db.getFollowers(msg.chat.id);
+
+      console.log(follows);
 
       if (!follows.length) {
         return this.bot.sendMessage(

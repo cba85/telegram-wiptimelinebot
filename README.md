@@ -22,7 +22,7 @@ It also contains 2 scripts located in `bin/` folder:
 
 ## Requirements
 
--   A PostgreSQL server _(I've chosen PostgreSQL to deploy my app on Heroku)_
+-   A PostgreSQL or MySQL server
 -   A Telegram bot (create your own bot using Telegram's BotFather and grab your TOKEN)
 
 ## Install
@@ -39,9 +39,27 @@ cp -v .env.example .env
 
 Add your database and Telegram credentials into the `.env` file.
 
+### Database
+
+Create a PostgreSQL or MySQL table based on the MySQL or PostgreSQL schema located in `db/` folder.
+
+#### PostgreSQL database
+
+Specify using a PostgreSQL server in `.env` file:
+
+```
+DATABASE_DRIVER=PGSQL
+```
+
 > If using this script locally, comment `PGSSLMODE=no-verify`.
 
-Create a PostgreSQL table based on `db/wip_telegram.sql` file.
+#### MySQL database
+
+Specify using a MySQL server in `.env` file:
+
+```
+DATABASE_DRIVER=MYSQL
+```
 
 ## Usage
 
@@ -81,20 +99,21 @@ The project is already configured for Heroku.
 
 You just need to add node and [pupeeter](https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku) buildpack.
 
-Then, set up your env credentials based on `.env` file. Set up `APP_ENV=heroku`. You don't need to setup `PG_*` for PostgreSQL credentials because the script will automatically use Heroku `DATABASE_URL`.
+Then, set up your env credentials based on `.env.example` file. Set up `APP_ENV=heroku`. You don't need to setup `PG_*` for PostgreSQL credentials because the script will automatically use Heroku `DATABASE_URL`.
 
 > You should use my [heroku-dotenv](https://github.com/cba85/heroku-dotenv) package to copy `.env` variables to Heroku environment variables.
 
 On Heroku, It's better to use `DATABASE_URL` instead default `PG_*` environment credentials because of this:
 
 > Maintenance is required for your database
+>
 > Your database DATABASE_URL on wip-telegram requires maintenance. During this period, your database will become read-only. Once maintenance has completed, your database credentials and hostname will have changed, but we will update your app’s config variables accordingly to reflect the new database connection string.
 >
 > This automated maintenance is a necessary part of our Hobby tier plans, Dev and Basic. Should you need more control over maintenance windows, a production database (Standard tier or higher) offers more control over database maintenance, as we are able to schedule them in advance and provide better tools for self-served maintenance.
 
 ### Configuration
 
-Add Heroku PostgreSQL addon, connect on your database using an app like [Postico](https://eggerapps.at/postico/) or [TablePlus](https://tableplus.com/), and create the database schema using queries inside the `schema.sql` file.
+Add Heroku PostgreSQL addon, connect on your database using an app like [Postico](https://eggerapps.at/postico/) or [TablePlus](https://tableplus.com/), and create the database schema using queries inside the `db/` folder.
 
 Your app is now ready.
 
@@ -105,6 +124,12 @@ You should now open Heroku console and launch `heroku run node job.js` to test y
 When the app works correctly, add Heroku scheduler addon and create a job every 10 min (or hours) for `bin/parse.js` to receive updates on your Telegram bot automatically.
 
 Add also a daily cron job for `bin/clean.js` to maintain a clean database.
+
+### MySQL
+
+This projet is configured for using a Heroku PostgreSQL server.
+
+If you prefer to use a MySQL server plugin for Heroku (like JawsDB Maria / JawsDB MySQL / ClearDB MySQL), you have to set up your env credentials based on [this part of the documentation](#mysql-database).
 
 ### Resources
 

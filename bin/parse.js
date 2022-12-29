@@ -1,12 +1,12 @@
 require("dotenv").config();
 
-const { browse } = require("../src/parser.js");
+const { browse } = require("../src/parser");
 const Telegram = require("../src/telegram");
-const Db = require("../src/db.js");
+const Db = require("../src/db/db");
 
 (async () => {
   console.log(`🤖 Start WIP.co parser`);
-  const db = new Db();
+  const db = await new Db();
 
   const telegramBot = new Telegram(null, db);
 
