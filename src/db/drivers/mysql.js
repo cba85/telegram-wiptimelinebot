@@ -22,11 +22,12 @@ module.exports = class Mysql {
 
   // Check if connected Telegram user exists
   async checkIfUserExists(id) {
-    const res = await this.conn.query("SELECT * from wip_users WHERE id = ?", [
-      id,
-    ]);
+    const res = await this.conn.query(
+      "SELECT COUNT(*) as total from wip_users WHERE id = ?",
+      [id]
+    );
 
-    return res.length;
+    return res.total;
   }
 
   // Get all Telegram users (used for checking WIP.co todos)
@@ -51,7 +52,7 @@ module.exports = class Mysql {
 
   // Create a user in database from Telegram
   async createUser(user) {
-    const res = await this.conn.query(
+    await this.conn.query(
       "INSERT INTO wip_users(id, username, first_name, last_name, is_bot, language_code) VALUES(?, ?, ?, ?, ?, ?)",
       [
         user.id,
@@ -63,17 +64,17 @@ module.exports = class Mysql {
       ]
     );
 
-    return res[0];
+    return true;
   }
 
   // Count followers for a user
   async countFollowers(userId) {
     const res = await this.conn.query(
-      "SELECT * from wip_follows WHERE user_id = ?",
+      "SELECT COUNT(*) as total from wip_follows WHERE user_id = ?",
       [userId]
     );
 
-    return res.length;
+    return res[0].total;
   }
 
   // Get followers for a user
@@ -121,17 +122,17 @@ module.exports = class Mysql {
       return false;
     }
 
-    const res = await this.conn.query(
+    await this.conn.query(
       "INSERT INTO wip_follows(user_id, username) VALUES(?, ?)",
       [id, username]
     );
 
-    return res[0];
+    return true;
   }
 
   // Save a completed todo from wip.co in database
   async saveTodo(userId, { id, username, body, images, videos }) {
-    const res = await this.conn.query(
+    await this.conn.query(
       "INSERT INTO wip_todos(user_id, todo_id, username, body, images, videos) VALUES(?, ?, ?, ?, ?, ?)",
       [
         userId,
@@ -143,17 +144,17 @@ module.exports = class Mysql {
       ]
     );
 
-    return res[0];
+    return true;
   }
 
   // Check if a todo exists in database already
   async existsTodo(userId, todoId) {
     const res = await this.conn.query(
-      "SELECT * from wip_todos WHERE user_id = ? AND todo_id = ?",
+      "SELECT COUNT(*) as total from wip_todos WHERE user_id = ? AND todo_id = ?",
       [userId, todoId]
     );
 
-    return res.length;
+    return res[0].total;
   }
 
   // Delete todos older than a week (7 days)

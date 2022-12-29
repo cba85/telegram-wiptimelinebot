@@ -82,8 +82,6 @@ module.exports = class Telegram {
     this.bot.onText(/\/list/, async (msg) => {
       let follows = await this.db.getFollowers(msg.chat.id);
 
-      console.log(follows);
-
       if (!follows.length) {
         return this.bot.sendMessage(
           msg.chat.id,
@@ -138,9 +136,9 @@ module.exports = class Telegram {
         );
       }
 
-      // Check if user already follow this maker
       const added = await this.db.followMaker(msg.chat.id, username);
 
+      // Check if user already follow this maker
       if (!added) {
         return this.bot.sendMessage(
           msg.chat.id,

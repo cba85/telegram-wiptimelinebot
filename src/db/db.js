@@ -64,7 +64,7 @@ module.exports = class Db {
 
   // Follow a wip.co maker
   async followMaker(id, username) {
-    return await this.db.checkIfUserExists(id, username);
+    return await this.db.followMaker(id, username);
   }
 
   // Save a completed todo from wip.co in database
