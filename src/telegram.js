@@ -85,7 +85,7 @@ module.exports = class Telegram {
       if (!follows.length) {
         return this.bot.sendMessage(
           msg.chat.id,
-          `😭 You don't follow any maker yet. Use "/follow @username" command to follow a wip.co maker.`
+          `😭 You are not following any maker yet. Use "/follow @username" command to follow a wip.co maker.`
         );
       }
 
@@ -106,7 +106,7 @@ module.exports = class Telegram {
       if (!deleted) {
         return this.bot.sendMessage(
           msg.chat.id,
-          `🔴 Error: you don't follow ${username}.`
+          `🔴 Error: you are not following ${username}.`
         );
       }
 
@@ -142,11 +142,14 @@ module.exports = class Telegram {
       if (!added) {
         return this.bot.sendMessage(
           msg.chat.id,
-          `🔴 Error: you already follow ${username}.`
+          `🔴 Error: you are already following ${username}.`
         );
       }
 
-      return this.bot.sendMessage(msg.chat.id, `👀 You now follow ${username}`);
+      return this.bot.sendMessage(
+        msg.chat.id,
+        `👀 You are now following ${username}`
+      );
     });
   }
 
