@@ -27,7 +27,7 @@ module.exports = class Mysql {
       [id]
     );
 
-    return res.total;
+    return res[0].total;
   }
 
   // Get all Telegram users (used for checking WIP.co todos)
