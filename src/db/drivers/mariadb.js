@@ -1,14 +1,14 @@
-const mysql = require("mysql2/promise");
+const mariadb = require("mariadb");
 
-module.exports = class Mysql {
+module.exports = class MariaDb {
   constructor() {
     return (async () => {
       if (process.env.APP_ENV == "heroku") {
-        this.connection = await mysql.createConnection(
+        this.conn = await mariadb.createConnection(
           process.env.JAWSDB_MARIA_URL
         );
       } else {
-        this.connection = await mysql.createConnection({
+        this.conn = await mariadb.createConnection({
           host: process.env.MYSQLHOST,
           user: process.env.MYSQLUSER,
           password: process.env.MYSQLPASSWORD,
@@ -22,38 +22,37 @@ module.exports = class Mysql {
 
   // Check if connected Telegram user exists
   async checkIfUserExists(id) {
-    const [rows] = await this.connection.execute(
+    const res = await this.conn.query(
       "SELECT COUNT(*) as total from wip_users WHERE id = ?",
       [id]
     );
 
-    return rows[0].total;
+    return res[0].total;
   }
 
   // Get all Telegram users (used for checking WIP.co todos)
   async getUsers() {
-    const [rows] = await this.connection.execute("SELECT * from wip_users");
+    const res = await this.conn.query("SELECT * from wip_users");
 
-    return rows;
+    return res;
   }
 
   // Get user by Telegram user id
   async getUser(id) {
-    const [rows] = await this.connection.execute(
-      "SELECT * from wip_users WHERE id = ?",
-      [id]
-    );
+    const res = await this.conn.query("SELECT * from wip_users WHERE id = ?", [
+      id,
+    ]);
 
-    if (!rows.length) {
+    if (!res.length) {
       return false;
     }
 
-    return rows[0];
+    return res[0];
   }
 
   // Create a user in database from Telegram
   async createUser(user) {
-    await this.connection.execute(
+    await this.conn.query(
       "INSERT INTO wip_users(id, username, first_name, last_name, is_bot, language_code) VALUES(?, ?, ?, ?, ?, ?)",
       [
         user.id,
@@ -70,36 +69,36 @@ module.exports = class Mysql {
 
   // Count followers for a user
   async countFollowers(userId) {
-    const [rows] = await this.connection.execute(
+    const res = await this.conn.query(
       "SELECT COUNT(*) as total from wip_follows WHERE user_id = ?",
       [userId]
     );
 
-    return rows[0].total;
+    return res[0].total;
   }
 
   // Get followers for a user
   async getFollowers(id) {
-    const [rows] = await this.connection.execute(
+    const res = await this.conn.query(
       "SELECT username from wip_follows WHERE user_id = ?",
       [id]
     );
 
-    return rows.map((item) => item.username);
+    return res.map((item) => item.username);
   }
 
   // Get a specific follower for a user
   async getFollower(id, username) {
-    const [rows] = await this.connection.execute(
+    const res = await this.conn.query(
       "SELECT * from wip_follows WHERE user_id = ? AND username = ?",
       [id, username]
     );
 
-    if (!rows.length) {
+    if (!res.length) {
       return false;
     }
 
-    return rows[0];
+    return res[0];
   }
 
   // Unfollow a wip.co maker
@@ -110,9 +109,7 @@ module.exports = class Mysql {
       return false;
     }
 
-    await this.connection.execute("DELETE FROM wip_follows WHERE id = ?", [
-      maker.id,
-    ]);
+    await this.conn.query("DELETE FROM wip_follows WHERE id = ?", [maker.id]);
 
     return true;
   }
@@ -125,7 +122,7 @@ module.exports = class Mysql {
       return false;
     }
 
-    await this.connection.execute(
+    await this.conn.query(
       "INSERT INTO wip_follows(user_id, username) VALUES(?, ?)",
       [id, username]
     );
@@ -135,7 +132,7 @@ module.exports = class Mysql {
 
   // Save a completed todo from wip.co in database
   async saveTodo(userId, { id, username, body, images, videos }) {
-    await this.connection.execute(
+    await this.conn.query(
       "INSERT INTO wip_todos(user_id, todo_id, username, body, images, videos) VALUES(?, ?, ?, ?, ?, ?)",
       [
         userId,
@@ -152,21 +149,21 @@ module.exports = class Mysql {
 
   // Check if a todo exists in database already
   async existsTodo(userId, todoId) {
-    const [rows] = await this.connection.execute(
+    const res = await this.conn.query(
       "SELECT COUNT(*) as total from wip_todos WHERE user_id = ? AND todo_id = ?",
       [userId, todoId]
     );
 
-    return rows[0].total;
+    return res[0].total;
   }
 
   // Delete todos older than a week (7 days)
   async cleanTodos() {
-    const count = await this.connection.execute(
+    const count = await this.conn.query(
       "SELECT COUNT(*) as total FROM wip_todos WHERE created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)"
     );
 
-    await this.connection.execute(
+    await this.conn.query(
       "DELETE FROM wip_todos WHERE created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)"
     );
 

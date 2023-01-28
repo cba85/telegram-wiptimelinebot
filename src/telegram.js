@@ -34,7 +34,7 @@ module.exports = class Telegram {
 
       this.bot.sendMessage(
         msg.chat.id,
-        `Create your own <a href="https://wip.co">wip.co</a> todos timeline of your favorite makers.\n\nCommands:\n/list: list the makers you follow\n/follow @username: follow a maker\n/unfollow @username: unfollow a maker\n/debug: see parser logs`,
+        `Create your own <a href="https://wip.co">wip.co</a> todos timeline of your favorite makers.`,
         { parse_mode: "HTML" }
       );
     });

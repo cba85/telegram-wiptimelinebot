@@ -1,11 +1,7 @@
 {
   "name": "WIP.co telegram timeline",
   "description": "Create your own WIP.co todos timeline of your favorite makers on Telegram.",
-  "keywords": [
-    "wip.co",
-    "telegram",
-    "maker"
-  ],
+  "keywords": ["wip.co", "telegram", "maker"],
   "repository": "https://github.com/cba85/wip-telegram-timeline",
   "env": {
     "TELEGRAM_BOT_TOKEN": {
@@ -31,14 +27,12 @@
     },
     "PGSSLMODE": {
       "value": "no-verify"
+    },
+    "DATABASE_DRIVER": {
+      "value": "MYSQL"
     }
   },
-  "addons": [
-    "scheduler",
-    {
-      "plan": "heroku-postgresql",
-    }
-  ],
+  "addons": ["scheduler", "jawsdb-maria"],
   "buildpacks": [
     {
       "url": "https://github.com/jontewks/puppeteer-heroku-buildpack"

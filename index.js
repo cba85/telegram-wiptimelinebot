@@ -8,7 +8,12 @@ const Db = require("./src/db/db");
 (async () => {
   const db = await new Db();
 
-  const telegramBot = new Telegram("webhook", db);
+  if (process.env.APP_ENV == "local") {
+    telegramBot = new Telegram("polling", db);
+  } else {
+    telegramBot = new Telegram("webhook", db);
+  }
+
   telegramBot.listen();
 
   const app = express();
