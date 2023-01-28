@@ -1,25 +1,13 @@
 const Mysql = require("./drivers/mysql");
-const MariaDb = require("./drivers/mariadb");
-const Pgsql = require("./drivers/pgsql");
+//const MariaDb = require("./drivers/mariadb");
+//const Pgsql = require("./drivers/pgsql");
 
 module.exports = class Db {
   db = null;
 
   constructor() {
     return (async () => {
-      const availableDrivers = ["mysql", "pgsql", "mariadb"];
-
-      if (!availableDrivers.includes(process.env.DATABASE_DRIVER)) {
-        throw new Error("Invalid database driver (mysql, mariadb or pgsql)");
-      }
-
-      if (process.env.DATABASE_DRIVER == "mysql") {
-        this.db = await new Mysql();
-      } else if (process.env.DATABASE_DRIVER == "mariadb") {
-        this.db = await new MariaDb();
-      } else if (process.env.DATABASE_DRIVER == "pgsql") {
-        this.db = await new Pgsql();
-      }
+      this.db = await new Mysql();
 
       return this;
     })();

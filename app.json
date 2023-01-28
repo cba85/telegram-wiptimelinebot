@@ -27,9 +27,6 @@
     },
     "PGSSLMODE": {
       "value": "no-verify"
-    },
-    "DATABASE_DRIVER": {
-      "value": "MYSQL"
     }
   },
   "addons": ["scheduler", "jawsdb-maria"],

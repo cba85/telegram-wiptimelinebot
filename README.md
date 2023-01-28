@@ -42,12 +42,6 @@ Create a PostgreSQL or MySQL/MariaDB table based on the MySQL or PostgreSQL sche
 
 ### MySQL database (default)
 
-Specify using a MySQL server in `.env` file:
-
-```
-DATABASE_DRIVER=MYSQL
-```
-
 [mysql2](https://www.npmjs.com/package/mysql2) package is installed by default. If you need to reinstall the package:
 
 ```
@@ -62,11 +56,11 @@ Install [node-postgres](https://node-postgres.com/) package:
 $ npm install pg
 ```
 
-Specify using a PostgreSQL server in `.env` file:
+In `src/db/db.js` file:
 
-```
-DATABASE_DRIVER=PGSQL
-```
+* Comment `const Mysql = require("./drivers/mysql");`
+* Uncomment `const Pgsql = require("./drivers/pgsql");`
+* Use  `this.db = await new Pgsql();` instead `this.db = await new Mysql();`
 
 > If using this script locally, comment `PGSSLMODE=no-verify`.
 
@@ -78,11 +72,11 @@ Install [mariadb](https://mariadb.com/kb/en/getting-started-with-the-nodejs-conn
 $ npm install mariadb
 ```
 
-Specify using a MariaDB server in `.env` file:
+In `src/db/db.js` file:
 
-```
-DATABASE_DRIVER=MARIADB
-```
+* Comment `const Mysql = require("./drivers/mysql");`
+* Uncomment `const MariaDb = require("./drivers/mariadb");`
+* Use  `this.db = await new MariaDb();` instead `this.db = await new Mysql();`
 
 ## Usage
 
