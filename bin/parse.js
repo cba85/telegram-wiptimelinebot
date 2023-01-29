@@ -35,9 +35,9 @@ const Db = require("../src/db/db");
     console.log(`👀 ${todos.length} todos retrieved for this user`);
 
     let countTodosSent = 0;
-    for (key in todos) {
-      const todo = todos[key];
+    for (todo of todos) {
       const exists = await db.existsTodo(user.id, todo.id);
+      //const exists = false;
 
       // Save todo and send it to Telegram if new
       if (!exists) {

@@ -8,7 +8,7 @@ Create your custom [WIP.co](https://wip.co/) completed todos timeline of your fa
 
 This is a simple app to parse [WIP.co](https://wip.co/) website, get your favorite makers completed todos, and send them on Telegram using a Telegram bot.
 
-This app doesn't require an active account on the website because it doesn't use wip.co API, but scrap wip.co website instead using [pupeeter](https://pptr.dev/).
+This app doesn't require an active account on the website because it doesn't use wip.co API, but scraps wip.co website instead using [cheerio](https://cheerio.js.org/).
 
 This app contains a entry point `index.js` that is the Telegram bot listener.
 
@@ -124,7 +124,7 @@ The project is already configured for Heroku.
 
 ### Manual deployment
 
-You just need to add node and [pupeeter](https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku) buildpack.
+You just need to add node buildpack.
 
 Then, set up your env credentials based on `.env.example` file. Set up `APP_ENV=heroku`. You don't need to setup `MYSQL*` credentials for MySQL because the script will automatically use Heroku `JAWSDB_MARIA_URL`.
 
@@ -151,5 +151,5 @@ If you prefer to use another MySQL server plugin for Heroku like JawsDB MySQL or
 ### Resources
 
 -   PostgreSQL: https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js
--   Pupeeter: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku
+-   Pupeeter: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku (replaced by Cheerio)
 -   Heroku Telegram Bot: https://github.com/odditive/heroku-node-telegram-bot

@@ -1,107 +1,106 @@
-const puppeteer = require("puppeteer");
+const axios = require("axios");
+const cheerio = require("cheerio");
 
 exports.browse = async (follows, maxPage = 1) => {
-  const browser = await puppeteer.launch({
-    args: ["--no-sandbox"],
-    //headless: false,
-  });
-  const page = await browser.newPage();
-
-  let content = [];
+  let todos = [];
 
   for (i = 1; i <= maxPage; i++) {
-    await page.goto(`https://wip.co/?page=${i}`);
+    const url = `https://wip.co/?page=${i}`;
+    let body;
 
-    // Get todos
-    const todos = await page.$$eval(
-      "[data-todo-id]",
-      (elements, follows) => {
-        let todos = [];
+    try {
+      const response = await axios.get(url);
+      body = response.data;
+    } catch (e) {
+      throw new Error(`Fetch error ${e.response.status}`);
+    }
 
-        // Parse todos
-        for (const element of elements) {
-          // Get todo username
-          let username = element.getElementsByClassName(
-            "font-sm text-gray-500"
-          )[0].textContent;
+    const $ = cheerio.load(body);
 
-          // Check if the todos belongs to an user followed
-          if (follows.includes(username)) {
-            // Create todo item
-            let t = {};
-            t.images = [];
-            t.videos = [];
-            t.id = element.dataset.todoId;
-            t.username = username;
+    const divs = $(".contents").find("turbo-frame");
 
-            // Regexes
-            const regexDataHovercardUrlValue =
-              /data-hovercard-url-value="(.|\n)*?"/gm;
-            const regexStyle = /<style>(.|\n)*?<\/style>/gm;
-            const regexClass = /class="(.|\n)*?"/gm;
-            const regexStyle2 = /style="(.|\n)*?"/gm;
+    divs.each((index, turboFrame) => {
+      const usernameElement = $(turboFrame).find(
+        "div .flex .gap-2 .items-center > a[data-controller]"
+      );
 
-            // Get todo body
-            let body = element.getElementsByClassName("text-lg")[0].innerHTML;
+      let username = usernameElement.attr("href");
 
-            // Remove useless HTML tag to avoid problems when sending messages on Telegram
-            body = body.replace(regexStyle, "");
-            body = body.replace(regexClass, "");
-            body = body.replace(regexStyle2, "");
-            body = body.replace(regexDataHovercardUrlValue, "");
-            body = body.replaceAll(`<span >`, "");
-            body = body.replaceAll(`</span>`, "");
-            body = body.replaceAll(`data-controller="hovercard"`, "");
-            body = body.replaceAll(`rel="nofollow noopener"`, "");
-            body = body.replace(/ +(?= )/g, "");
+      if (!username) {
+        return;
+      }
 
-            // Remove images in body
-            t.body = body.replace(/<img .*?>/g, "");
+      username = username.replace("/", "");
 
-            // Get todo images
-            const images = element.getElementsByClassName(
-              "grid grid-flow-row-dense gap-0.5"
-            );
+      if (!follows.includes(username)) {
+        return;
+      }
 
-            for (const image of images) {
-              // Get images
-              const imgElements = image.getElementsByTagName("img");
+      // Create todo item
+      let t = {};
+      t.images = [];
+      t.videos = [];
+      t.id = $(turboFrame).attr("data-todo-id");
+      t.username = username;
 
-              for (const imgElement of imgElements) {
-                // Get high res images
-                const srcset = imgElement.srcset.split(",");
-                const maxSrcset = srcset[srcset.length - 1].trim().split(" ");
-                t.images.push(maxSrcset[0]);
-              }
-            }
+      // Regexes
+      const regexDataHovercardUrlValue =
+        /data-hovercard-url-value="(.|\n)*?"/gm;
+      const regexStyle = /<style>(.|\n)*?<\/style>/gm;
+      const regexClass = /class="(.|\n)*?"/gm;
+      const regexStyle2 = /style="(.|\n)*?"/gm;
 
-            // Get todo videos
-            const videos = element.getElementsByClassName(
-              "flex flex-col gap-1"
-            );
+      // Get todo body
+      const bodyElement = $(turboFrame).find("div .text-lg");
+      let body = bodyElement.html();
 
-            for (const video of videos) {
-              // Get videos
-              const videoElements = video.getElementsByTagName("source");
+      // Remove useless HTML tag to avoid problems when sending messages on Telegram
+      body = body.replace(regexStyle, "");
+      body = body.replace(regexClass, "");
+      body = body.replace(regexStyle2, "");
+      body = body.replace(regexDataHovercardUrlValue, "");
+      body = body.replaceAll(`<span >`, "");
+      body = body.replaceAll(`</span>`, "");
+      body = body.replaceAll(`data-controller="hovercard"`, "");
+      body = body.replaceAll(`rel="nofollow noopener"`, "");
+      body = body.replace(/ +(?= )/g, "");
 
-              for (const videoElement of videoElements) {
-                t.videos.push(videoElement.getAttribute("src"));
-              }
-            }
+      // Remove images in body
+      t.body = body.replace(/<img .*?>/g, "");
 
-            todos.push(t);
-          }
+      // Get todo images
+      const imagesElement = $(turboFrame).find("img");
+
+      imagesElement.each((index, img) => {
+        const srcsets = $(img).attr("srcset");
+
+        if (!srcsets) {
+          return;
         }
 
-        return todos;
-      },
-      follows
-    );
+        const width = $(img).attr("width");
 
-    content.push(...todos);
+        if (width == 25 || width == 40) {
+          return;
+        }
+
+        // Get high res images
+        const srcset = srcsets.split(",");
+        const maxSrcset = srcset[srcset.length - 1].trim().split(" ");
+        t.images.push(maxSrcset[0]);
+      });
+
+      // Get todo videos
+      const videosElement = $(turboFrame).find("source");
+
+      videosElement.each((index, video) => {
+        const src = $(video).attr("src");
+        t.videos.push(src);
+      });
+
+      todos.push(t);
+    });
   }
 
-  await browser.close();
-
-  return content.reverse();
+  return todos;
 };
