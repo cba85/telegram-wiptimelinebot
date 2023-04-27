@@ -9,7 +9,6 @@ module.exports = class Telegram {
       this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN);
       this.bot.setWebHook(`${process.env.APP_URL}/${this.bot.token}`);
       this.db = db;
-      this.command = new Command(db);
     } else if (type == "polling") {
       this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN, {
         polling: true,
