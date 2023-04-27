@@ -3,19 +3,7 @@ const mysql = require("mysql2/promise");
 module.exports = class Mysql {
   constructor() {
     return (async () => {
-      if (process.env.APP_ENV == "heroku") {
-        this.connection = await mysql.createConnection(
-          process.env.JAWSDB_MARIA_URL
-        );
-      } else {
-        this.connection = await mysql.createConnection({
-          host: process.env.MYSQLHOST,
-          user: process.env.MYSQLUSER,
-          password: process.env.MYSQLPASSWORD,
-          database: process.env.MYSQLDATABASE,
-        });
-      }
-
+      this.connection = await mysql.createConnection(process.env.DATABASE_URL);
       return this;
     })();
   }

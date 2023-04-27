@@ -3,17 +3,12 @@ const { Client } = require("pg");
 module.exports = class Pgsql {
   constructor() {
     return (async () => {
-      if (process.env.APP_ENV == "heroku") {
-        this.client = new Client({
-          connectionString: process.env.DATABASE_URL,
-          ssl: {
-            rejectUnauthorized: false,
-          },
-        });
-      } else {
-        this.client = new Client();
-      }
-
+      this.client = new Client({
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      });
       this.client.connect();
 
       return this;

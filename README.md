@@ -2,7 +2,7 @@
 
 Create your custom [WIP.co](https://wip.co/) completed todos timeline of your favorite makers on Telegram.
 
-🤖 To use the bot, just add WipTimelineBot on Telegram !
+🤖 To use the bot, just add [WipTimelineBot](https://t.me/WipTimelineBot) on Telegram !
 
 ---
 
@@ -116,39 +116,7 @@ unfollow - unfollow a maker
 debug - Debug mode
 ```
 
-## Deploy on Heroku
-
-The project is already configured for Heroku.
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
-### Manual deployment
-
-You just need to add node buildpack.
-
-Then, set up your env credentials based on `.env.example` file. Set up `APP_ENV=heroku`. You don't need to setup `MYSQL*` credentials for MySQL because the script will automatically use Heroku `JAWSDB_MARIA_URL`.
-
-> You should use my [heroku-dotenv](https://github.com/cba85/heroku-dotenv) package to copy `.env` variables to Heroku environment variables.
-
-### Configuration
-
-Add JawsDB MariaDB addon, connect on your database using an app like [Postico](https://eggerapps.at/postico/) or [TablePlus](https://tableplus.com/), and create the database schema using queries inside the `db/` folder.
-
-🚀 Your app is now ready.
-
-You should now open Heroku console and launch `heroku run node job.js` to test your app and start to parse some updates from your favorite makers. Don't forget to add usernames you want to follow in your Telegram bot using `/follow @username` command.
-
-When the app works correctly, add Heroku scheduler addon and create a job every 10 min (or hours) for `bin/parse.js` to receive updates on your Telegram bot automatically.
-
-Add also a daily cron job for `bin/clean.js` to maintain a clean database.
-
-### MySQL
-
-This projet is configured to use a JawsDB MariaDB server.
-
-If you prefer to use another MySQL server plugin for Heroku like JawsDB MySQL or ClearDB MySQL, you have to set up your env credentials based on [this part of the documentation](#mysql-database).
-
-### Resources
+## Resources
 
 -   PostgreSQL: https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js
 -   Pupeeter: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku (replaced by Cheerio)
