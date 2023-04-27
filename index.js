@@ -14,13 +14,14 @@ const Db = require("./src/db/db");
     telegramBot = new Telegram("webhook", db);
   }
 
+  telegramBot.listen();
+
   const app = express();
   app.use(bodyParser.json());
 
   var server = app.listen(process.env.PORT, "0.0.0.0", () => {
     const host = server.address().address;
     const port = server.address().port;
-    telegramBot.listen();
     console.log("Web server started at http://%s:%s", host, port);
   });
 
