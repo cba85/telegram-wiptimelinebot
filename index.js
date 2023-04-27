@@ -29,7 +29,7 @@ const Db = require("./src/db/db");
     res.send("Telegram WIP.co timeline bot");
   });
 
-  app.post("/" + telegramBot.bot.token, (req, res) => {
+  app.post(`/${telegramBot.bot.token}`, (req, res) => {
     telegramBot.bot.processUpdate(req.body);
     res.sendStatus(200);
   });
