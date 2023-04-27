@@ -1,0 +1,12 @@
+{
+  "cron": [
+    {
+      "command": "node bin/parse.js",
+      "schedule": "10 * * * *"
+    },
+    {
+      "command": "node bin/clean.js",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}

@@ -4,19 +4,22 @@ const { browse } = require("./parser");
 const Db = require("./db/db");
 
 module.exports = class Telegram {
-  constructor(type = null, db) {
-    if (!type) {
+  constructor(type = null, db = null) {
+    if (type == "webhook") {
       this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN);
+      this.bot.setWebHook(`${process.env.APP_URL}/${this.bot.token}`);
+      this.db = db;
+      this.command = new Command(db);
     } else if (type == "polling") {
       this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN, {
         polling: true,
       });
-    } else if (type == "webhook") {
-      this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN);
-      this.bot.setWebHook(process.env.APP_URL + this.bot.token);
+      this.db = db;
+    } else {
+      this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN, {
+        polling: true,
+      });
     }
-
-    this.db = db;
 
     console.log(`Telegram bot server started in the ${type} mode`);
   }

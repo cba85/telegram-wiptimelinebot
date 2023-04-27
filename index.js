@@ -25,7 +25,7 @@ const Db = require("./src/db/db");
     console.log("Web server started at http://%s:%s", host, port);
   });
 
-  app.get("/", (req, res) => {
+  app.get("/", async (req, res) => {
     res.send("Telegram WIP.co timeline bot");
   });
 

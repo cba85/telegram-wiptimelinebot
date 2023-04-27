@@ -9,7 +9,7 @@ if (process.argv.length != 4) {
 }
 
 (async () => {
-  const telegramBot = new Telegram(null);
+  const telegramBot = new Telegram("polling");
 
   const chatId = process.argv[2];
   const photoUrl = process.argv[3];

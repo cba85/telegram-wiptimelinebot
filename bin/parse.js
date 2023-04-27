@@ -8,7 +8,7 @@ const Db = require("../src/db/db");
   console.log(`🤖 Start WIP.co parser`);
   const db = await new Db();
 
-  const telegramBot = new Telegram(null, db);
+  const telegramBot = new Telegram("polling", db);
 
   // Get users
   const users = await db.getUsers();
