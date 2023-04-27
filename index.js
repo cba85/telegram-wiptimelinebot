@@ -6,7 +6,11 @@ const Telegram = require("./src/telegram");
 const Db = require("./src/db/db");
 
 (async () => {
+  const app = express();
+  app.use(bodyParser.json());
+
   const db = await new Db();
+  let telegramBot;
 
   if (process.env.APP_ENV == "local") {
     telegramBot = new Telegram("polling", db);
@@ -16,10 +20,7 @@ const Db = require("./src/db/db");
 
   telegramBot.listen();
 
-  const app = express();
-  app.use(bodyParser.json());
-
-  var server = app.listen(process.env.PORT, "0.0.0.0", () => {
+  const server = app.listen(process.env.PORT, "0.0.0.0", () => {
     const host = server.address().address;
     const port = server.address().port;
     console.log("Web server started at http://%s:%s", host, port);
@@ -29,7 +30,7 @@ const Db = require("./src/db/db");
     res.send("Telegram WIP.co timeline bot");
   });
 
-  app.post(`/${telegramBot.bot.token}`, (req, res) => {
+  app.post(`/${process.env.TELEGRAM_BOT_TOKEN}`, async (req, res) => {
     telegramBot.bot.processUpdate(req.body);
     res.sendStatus(200);
   });
