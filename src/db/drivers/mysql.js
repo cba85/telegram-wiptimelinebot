@@ -150,7 +150,7 @@ module.exports = class Mysql {
 
   // Delete todos older than a week (7 days)
   async cleanTodos() {
-    const count = await this.connection.execute(
+    const [rows] = await this.connection.execute(
       "SELECT COUNT(*) as total FROM wip_todos WHERE created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)"
     );
 
@@ -158,6 +158,6 @@ module.exports = class Mysql {
       "DELETE FROM wip_todos WHERE created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)"
     );
 
-    return count[0].total;
+    return rows[0].total;
   }
 };
