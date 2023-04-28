@@ -10,14 +10,8 @@ const Db = require("./src/db/db");
   app.use(bodyParser.json());
 
   const db = await new Db();
-  let telegramBot;
 
-  if (process.env.APP_ENV == "local") {
-    telegramBot = new Telegram("polling", db);
-  } else {
-    telegramBot = new Telegram("webhook", db);
-  }
-
+  const telegramBot = new Telegram(db);
   telegramBot.listen();
 
   const server = app.listen(process.env.PORT, "0.0.0.0", () => {

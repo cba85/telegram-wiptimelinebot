@@ -14,6 +14,7 @@
   "scripts": {
     "start": "node index.js",
     "parse": "node bin/parse.js",
-    "clean": "node bin/clean.js"
+    "clean": "node bin/clean.js",
+    "dokku": "git push dokku master"
   }
 }
