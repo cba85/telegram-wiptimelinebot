@@ -3,7 +3,7 @@ const mysql = require("mysql2/promise");
 module.exports = class Mysql {
   constructor() {
     return (async () => {
-      this.connection = await mysql.createConnection(process.env.DATABASE_URL);
+      this.connection = await mysql.createPool(process.env.DATABASE_URL);
       return this;
     })();
   }
