@@ -7,6 +7,7 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const Telegram = require("./src/telegram");
 const Db = require("./src/db/db");
+const nunjucks = require("nunjucks");
 
 (async () => {
   const app = express();
@@ -24,6 +25,19 @@ const Db = require("./src/db/db");
 
   app.use(limiter);
 
+  let noCache = false;
+  if (process.env.APP_ENV == "local") {
+    noCache = true;
+  }
+
+  let env = nunjucks.configure("views", {
+    autoescape: true,
+    express: app,
+    noCache: noCache,
+  });
+
+  app.use(express.static("public"));
+
   const db = await new Db();
 
   const telegramBot = new Telegram(db);
@@ -36,7 +50,7 @@ const Db = require("./src/db/db");
   });
 
   app.get("/", async (req, res) => {
-    res.send("Telegram WIP.co timeline bot");
+    res.render("index.html");
   });
 
   app.post(`/${process.env.TELEGRAM_BOT_TOKEN}`, async (req, res) => {

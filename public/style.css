@@ -1,0 +1,48 @@
+/* GENERAL */
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    margin: 0 auto;
+  }
+
+a {
+    color: #0088cc;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* BUTTONS */
+
+.btn-telegram {
+    margin-top: 2rem;
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    background-image: linear-gradient(-180deg, #37aee2 0%, #1e96c8 100%);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    color: white;
+    text-decoration: none;
+    justify-content: center;
+}
+
+.btn-telegram::before {
+    display: block;
+    content: "";
+    background-image: url(/telegram_airplane.svg);
+    background-repeat: no-repeat;
+    background-size: contains;
+    width: 2rem;
+}
+
+/* MAIN */
+
+.container {
+    background-color: white;
+    padding: 1em;
+    max-width: 42em;
+    margin: 0 auto;
+    font-size: 1.1rem;
+}

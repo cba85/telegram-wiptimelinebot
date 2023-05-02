@@ -11,7 +11,8 @@
     "express-rate-limit": "^6.7.0",
     "helmet": "^6.1.5",
     "mysql2": "^3.0.1",
-    "node-telegram-bot-api": "^0.53.0"
+    "node-telegram-bot-api": "^0.53.0",
+    "nunjucks": "^3.2.4"
   },
   "main": "index.js",
   "scripts": {
