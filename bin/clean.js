@@ -9,8 +9,5 @@ const Db = require("../src/db/db");
   const removedTodosCount = await db.cleanTodos();
   console.log(`${removedTodosCount} todo(s) deleted.`);
 
-  // Kill scripts after some times to give telegram API time to send messages
-  setTimeout(function () {
-    process.exit();
-  }, 5000);
+  process.exit();
 })();

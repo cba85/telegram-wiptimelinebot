@@ -54,8 +54,5 @@ const Db = require("../src/db/db");
     console.log(`💬 ${countTodosSent} todos sent to Telegram`);
   }
 
-  // Kill scripts after some times to give telegram API time to send messages
-  setTimeout(function () {
-    process.exit();
-  }, 10000);
+  process.exit();
 })();
