@@ -17,10 +17,9 @@ module.exports = class Pgsql {
 
   // Check if connected Telegram user exists
   async checkIfUserExists(id) {
-    const res = await this.client.query(
-      "SELECT * from wip_users WHERE id = $1",
-      [id]
-    );
+    const res = await this.client.query("SELECT * from users WHERE id = $1", [
+      id,
+    ]);
 
     return res.rowCount;
   }
@@ -28,7 +27,7 @@ module.exports = class Pgsql {
   // Get all Telegram users (used for checking WIP.co todos)
   async getUsers() {
     const res = await this.client.query({
-      text: "SELECT * from wip_users",
+      text: "SELECT * from users",
     });
 
     return res.rows;
@@ -36,10 +35,9 @@ module.exports = class Pgsql {
 
   // Get user by Telegram user id
   async getUser(id) {
-    const res = await this.client.query(
-      "SELECT * from wip_users WHERE id = $1",
-      [id]
-    );
+    const res = await this.client.query("SELECT * from users WHERE id = $1", [
+      id,
+    ]);
 
     if (!res.rowCount) {
       return false;
@@ -51,7 +49,7 @@ module.exports = class Pgsql {
   // Create a user in database from Telegram
   async createUser(user) {
     const res = await this.client.query(
-      "INSERT INTO wip_users(id, username, first_name, last_name, is_bot, language_code) VALUES($1, $2, $3, $4, $5, $6) RETURNING *",
+      "INSERT INTO users(id, username, first_name, last_name, is_bot, language_code) VALUES($1, $2, $3, $4, $5, $6) RETURNING *",
       [
         user.id,
         user.username,
@@ -68,7 +66,7 @@ module.exports = class Pgsql {
   // Count followers for a user
   async countFollowers(userId) {
     const res = await this.client.query(
-      "SELECT * from wip_follows WHERE user_id = $1",
+      "SELECT * from follows WHERE user_id = $1",
       [userId]
     );
 
@@ -79,7 +77,7 @@ module.exports = class Pgsql {
   async getFollowers(id) {
     const res = await this.client.query({
       rowMode: "array",
-      text: "SELECT username from wip_follows WHERE user_id = $1",
+      text: "SELECT username from follows WHERE user_id = $1",
       values: [id],
     });
 
@@ -89,7 +87,7 @@ module.exports = class Pgsql {
   // Get a specific follower for a user
   async getFollower(id, username) {
     const res = await this.client.query(
-      "SELECT * from wip_follows WHERE user_id = $1 AND username = $2",
+      "SELECT * from follows WHERE user_id = $1 AND username = $2",
       [id, username]
     );
 
@@ -108,9 +106,7 @@ module.exports = class Pgsql {
       return false;
     }
 
-    await this.client.query("DELETE FROM wip_follows WHERE id = $1", [
-      maker.id,
-    ]);
+    await this.client.query("DELETE FROM follows WHERE id = $1", [maker.id]);
 
     return true;
   }
@@ -124,7 +120,7 @@ module.exports = class Pgsql {
     }
 
     const res = await this.client.query(
-      "INSERT INTO wip_follows(user_id, username) VALUES($1, $2) RETURNING *",
+      "INSERT INTO follows(user_id, username) VALUES($1, $2) RETURNING *",
       [id, username]
     );
 
@@ -134,7 +130,7 @@ module.exports = class Pgsql {
   // Save a completed todo from wip.co in database
   async saveTodo(userId, { id, username, body, images, videos }) {
     const res = await this.client.query(
-      "INSERT INTO wip_todos(user_id, todo_id, username, body, images, videos) VALUES($1, $2, $3, $4, $5, $6) RETURNING *",
+      "INSERT INTO todos(user_id, todo_id, username, body, images, videos) VALUES($1, $2, $3, $4, $5, $6) RETURNING *",
       [
         userId,
         id,
@@ -151,7 +147,7 @@ module.exports = class Pgsql {
   // Check if a todo exists in database already
   async existsTodo(userId, todoId) {
     const res = await this.client.query(
-      "SELECT * from wip_todos WHERE user_id = $1 AND todo_id = $2",
+      "SELECT * from todos WHERE user_id = $1 AND todo_id = $2",
       [userId, todoId]
     );
 
@@ -161,7 +157,7 @@ module.exports = class Pgsql {
   // Delete todos older than a week (7 days)
   async cleanTodos() {
     const res = await this.client.query(
-      "DELETE FROM wip_todos WHERE created_at < now() - interval '7 days'"
+      "DELETE FROM todos WHERE created_at < now() - interval '7 days'"
     );
 
     return res.rowCount;

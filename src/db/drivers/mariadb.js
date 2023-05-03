@@ -13,7 +13,7 @@ module.exports = class MariaDb {
   // Check if connected Telegram user exists
   async checkIfUserExists(id) {
     const res = await this.conn.query(
-      "SELECT COUNT(*) as total from wip_users WHERE id = ?",
+      "SELECT COUNT(*) as total from users WHERE id = ?",
       [id]
     );
 
@@ -22,16 +22,14 @@ module.exports = class MariaDb {
 
   // Get all Telegram users (used for checking WIP.co todos)
   async getUsers() {
-    const res = await this.conn.query("SELECT * from wip_users");
+    const res = await this.conn.query("SELECT * from users");
 
     return res;
   }
 
   // Get user by Telegram user id
   async getUser(id) {
-    const res = await this.conn.query("SELECT * from wip_users WHERE id = ?", [
-      id,
-    ]);
+    const res = await this.conn.query("SELECT * from users WHERE id = ?", [id]);
 
     if (!res.length) {
       return false;
@@ -43,7 +41,7 @@ module.exports = class MariaDb {
   // Create a user in database from Telegram
   async createUser(user) {
     await this.conn.query(
-      "INSERT INTO wip_users(id, username, first_name, last_name, is_bot, language_code) VALUES(?, ?, ?, ?, ?, ?)",
+      "INSERT INTO users(id, username, first_name, last_name, is_bot, language_code) VALUES(?, ?, ?, ?, ?, ?)",
       [
         user.id,
         user.username,
@@ -60,7 +58,7 @@ module.exports = class MariaDb {
   // Count followers for a user
   async countFollowers(userId) {
     const res = await this.conn.query(
-      "SELECT COUNT(*) as total from wip_follows WHERE user_id = ?",
+      "SELECT COUNT(*) as total from follows WHERE user_id = ?",
       [userId]
     );
 
@@ -70,7 +68,7 @@ module.exports = class MariaDb {
   // Get followers for a user
   async getFollowers(id) {
     const res = await this.conn.query(
-      "SELECT username from wip_follows WHERE user_id = ?",
+      "SELECT username from follows WHERE user_id = ?",
       [id]
     );
 
@@ -80,7 +78,7 @@ module.exports = class MariaDb {
   // Get a specific follower for a user
   async getFollower(id, username) {
     const res = await this.conn.query(
-      "SELECT * from wip_follows WHERE user_id = ? AND username = ?",
+      "SELECT * from follows WHERE user_id = ? AND username = ?",
       [id, username]
     );
 
@@ -99,7 +97,7 @@ module.exports = class MariaDb {
       return false;
     }
 
-    await this.conn.query("DELETE FROM wip_follows WHERE id = ?", [maker.id]);
+    await this.conn.query("DELETE FROM follows WHERE id = ?", [maker.id]);
 
     return true;
   }
@@ -113,7 +111,7 @@ module.exports = class MariaDb {
     }
 
     await this.conn.query(
-      "INSERT INTO wip_follows(user_id, username) VALUES(?, ?)",
+      "INSERT INTO follows(user_id, username) VALUES(?, ?)",
       [id, username]
     );
 
@@ -123,7 +121,7 @@ module.exports = class MariaDb {
   // Save a completed todo from wip.co in database
   async saveTodo(userId, { id, username, body, images, videos }) {
     await this.conn.query(
-      "INSERT INTO wip_todos(user_id, todo_id, username, body, images, videos) VALUES(?, ?, ?, ?, ?, ?)",
+      "INSERT INTO todos(user_id, todo_id, username, body, images, videos) VALUES(?, ?, ?, ?, ?, ?)",
       [
         userId,
         id,
@@ -140,7 +138,7 @@ module.exports = class MariaDb {
   // Check if a todo exists in database already
   async existsTodo(userId, todoId) {
     const res = await this.conn.query(
-      "SELECT COUNT(*) as total from wip_todos WHERE user_id = ? AND todo_id = ?",
+      "SELECT COUNT(*) as total from todos WHERE user_id = ? AND todo_id = ?",
       [userId, todoId]
     );
 
@@ -150,11 +148,11 @@ module.exports = class MariaDb {
   // Delete todos older than a week (7 days)
   async cleanTodos() {
     const count = await this.conn.query(
-      "SELECT COUNT(*) as total FROM wip_todos WHERE created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)"
+      "SELECT COUNT(*) as total FROM todos WHERE created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)"
     );
 
     await this.conn.query(
-      "DELETE FROM wip_todos WHERE created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)"
+      "DELETE FROM todos WHERE created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)"
     );
 
     return count[0].total;

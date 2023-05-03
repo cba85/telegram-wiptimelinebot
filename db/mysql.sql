@@ -1,10 +1,10 @@
-CREATE TABLE wip_follows (
+CREATE TABLE follows (
     username varchar(255) NOT NULL,
     user_id int NOT NULL,
     id int PRIMARY KEY NOT NULL AUTO_INCREMENT
 );
 
-CREATE TABLE wip_todos (
+CREATE TABLE todos (
     id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
     username varchar(255) NOT NULL,
     body text NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE wip_todos (
     user_id int NOT NULL
 );
 
-CREATE TABLE wip_users (
+CREATE TABLE users (
     id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
     username varchar(255) NOT NULL,
     first_name varchar(255),

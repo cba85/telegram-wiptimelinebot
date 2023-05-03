@@ -1,7 +1,7 @@
 
 CREATE SEQUENCE IF NOT EXISTS follows_id_seq1;
 
-CREATE TABLE "public"."wip_follows" (
+CREATE TABLE "public"."follows" (
     "username" varchar(255) NOT NULL,
     "user_id" varchar NOT NULL,
     "id" int4 NOT NULL DEFAULT nextval('follows_id_seq1'::regclass)
@@ -9,7 +9,7 @@ CREATE TABLE "public"."wip_follows" (
 
 CREATE SEQUENCE IF NOT EXISTS todos_id_seq;
 
-CREATE TABLE "public"."wip_todos" (
+CREATE TABLE "public"."todos" (
     "id" int4 NOT NULL DEFAULT nextval('todos_id_seq'::regclass),
     "username" varchar(255) NOT NULL,
     "body" text NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE "public"."wip_todos" (
     "user_id" int4 NOT NULL
 );
 
-CREATE TABLE "public"."wip_users" (
+CREATE TABLE "public"."users" (
     "id" varchar NOT NULL,
     "username" varchar NOT NULL,
     "first_name" varchar,
