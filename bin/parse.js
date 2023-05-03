@@ -56,7 +56,6 @@ const Db = require("../src/db/db");
 
   // Kill scripts after some times to give telegram API time to send messages
   setTimeout(function () {
-    console.log("✅ Parser job done");
     process.exit();
   }, 10000);
 })();
