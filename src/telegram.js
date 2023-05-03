@@ -34,8 +34,12 @@ module.exports = class Telegram {
 
       this.bot.sendMessage(
         msg.chat.id,
-        `Create your own <a href="https://wip.co">wip.co</a> todos timeline of your favorite makers.`,
-        { parse_mode: "HTML" }
+        `Create your own <a href="https://wip.co">wip.co</a> todos timeline of your favorite makers.
+
+👀 Start by following your favorite markers using <code>/follow @username</code> command.
+
+Type <code>/following</code> to see all the makers you are following.`,
+        { parse_mode: "HTML", disable_web_page_preview: true }
       );
     });
 
@@ -77,9 +81,9 @@ module.exports = class Telegram {
       return this.bot.sendMessage(msg.chat.id, message);
     });
 
-    // /list
+    // /following
     // Send followers list
-    this.bot.onText(/\/list/, async (msg) => {
+    this.bot.onText(/\/following/, async (msg) => {
       let follows = await this.db.getFollowers(msg.chat.id);
 
       if (!follows.length) {
@@ -97,6 +101,16 @@ module.exports = class Telegram {
     });
 
     // /unfollow
+    this.bot.onText(/((^|, )(\/unfollow))+$/, async (msg) => {
+      return this.bot.sendMessage(
+        msg.chat.id,
+        `Please add the username of the maker you want to stop following\ne.g. /unfollow @marc`,
+        {
+          reply_to_message_id: msg.message_id,
+        }
+      );
+    });
+
     // Unfollow a maker
     this.bot.onText(/\/unfollow (.+)/, async (msg, match) => {
       const username = match[1];
@@ -117,6 +131,16 @@ module.exports = class Telegram {
     });
 
     // /follow
+    this.bot.onText(/((^|, )(\/follow))+$/, async (msg) => {
+      return this.bot.sendMessage(
+        msg.chat.id,
+        `Please add the username of the maker you want to follow\ne.g. /follow @marc`,
+        {
+          reply_to_message_id: msg.message_id,
+        }
+      );
+    });
+
     // Follow a maker (limit to 10)
     this.bot.onText(/\/follow (.+)/, async (msg, match) => {
       const username = match[1];

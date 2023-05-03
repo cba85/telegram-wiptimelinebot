@@ -101,7 +101,7 @@ Use a cron scheduler to automatically receive updates (completed todos) from you
 ## Commands
 
 -   `/start` : list commands available
--   `/list`: list makers you follow
+-   `/following`: list makers you follow
 -   `/follow @username`: follow @username
 -   `/unfollow @username`: unfollow @username
 -   `/debug`: get Telegram chatId and username
@@ -110,7 +110,7 @@ Use a cron scheduler to automatically receive updates (completed todos) from you
 
 ```txt
 start - Main menu
-list - list makers you follow
+following - list makers you follow
 follow - follow a maker
 unfollow - unfollow a maker
 debug - Debug mode
@@ -118,6 +118,6 @@ debug - Debug mode
 
 ## Resources
 
--   PostgreSQL: https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js
--   Pupeeter: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku (replaced by Cheerio)
--   Heroku Telegram Bot: https://github.com/odditive/heroku-node-telegram-bot
+-   PostgreSQL: https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js *(not using Heroku anymore)*
+-   Pupeeter: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku *(replaced by Cheerio)*
+-   Heroku Telegram Bot: https://github.com/odditive/heroku-node-telegram-bot *(not using Heroku anymore)*
