@@ -8,7 +8,7 @@ const Db = require("../src/db/db");
   console.log(`🤖 Start WIP.co parser`);
   const db = await new Db();
 
-  const telegramBot = new Telegram(db);
+  const telegramBot = new Telegram();
 
   // Get users
   const users = await db.getUsers();
@@ -30,7 +30,7 @@ const Db = require("../src/db/db");
 
     // Debug todos
     //console.log(todos);
-    //return;
+    //process.exit();
 
     console.log(`👀 ${todos.length} todos retrieved for this user`);
 
@@ -42,7 +42,7 @@ const Db = require("../src/db/db");
       // Save todo and send it to Telegram if new
       if (!exists) {
         await db.saveTodo(user.id, todo);
-        telegramBot.sendMessage(user.id, todo);
+        await telegramBot.sendMessage(user.id, todo);
         countTodosSent++;
         console.log(`💬 ${countTodosSent} | ${todo.username}: ${todo.body}`);
         console.log(
