@@ -76,7 +76,7 @@ Type <code>/following</code> to see all the makers you are following.`,
         }
       }
 
-      message += `\n💬 ${countTodosSent} new todos has to be send to Telegram`;
+      message += `\n📢 ${countTodosSent} new todos has to be send to Telegram`;
 
       return this.bot.sendMessage(msg.chat.id, message);
     });

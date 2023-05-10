@@ -51,7 +51,7 @@ const Db = require("../src/db/db");
       }
     }
 
-    console.log(`💬 ${countTodosSent} todos sent to Telegram`);
+    console.log(`📢 ${countTodosSent} todos sent to Telegram`);
   }
 
   process.exit();
