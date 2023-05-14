@@ -45,11 +45,11 @@ module.exports = class Db {
       "INSERT INTO users(id, username, first_name, last_name, is_bot, language_code) VALUES(?, ?, ?, ?, ?, ?)",
       [
         user.id,
-        user.username,
-        user.first_name,
-        user.last_name,
-        user.is_bot,
-        user.language_code,
+        user.username ?? null,
+        user.first_name ?? null,
+        user.last_name ?? null,
+        user.is_bot ?? null,
+        user.language_code ?? null,
       ]
     );
 
