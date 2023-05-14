@@ -19,7 +19,7 @@ It also contains 2 scripts located in `bin/` folder:
 
 ## Requirements
 
--   A PostgreSQL or MySQL/MariaDB server
+-   A MySQL server
 -   A Telegram bot (create your own bot using Telegram's BotFather and grab your TOKEN)
 
 ## Install
@@ -38,45 +38,7 @@ Add your database and Telegram credentials into the `.env` file.
 
 ### Database
 
-Create a PostgreSQL or MySQL/MariaDB table based on the MySQL or PostgreSQL schema located in `db/` folder.
-
-### MySQL database (default)
-
-[mysql2](https://www.npmjs.com/package/mysql2) package is installed by default. If you need to reinstall the package:
-
-```
-$ npm install mysql2
-```
-
-### PostgreSQL database
-
-Install [node-postgres](https://node-postgres.com/) package:
-
-```
-$ npm install pg
-```
-
-In `src/db/db.js` file:
-
-* Comment `const Mysql = require("./drivers/mysql");`
-* Uncomment `const Pgsql = require("./drivers/pgsql");`
-* Use  `this.db = await new Pgsql();` instead `this.db = await new Mysql();`
-
-> If using this script locally, comment `PGSSLMODE=no-verify`.
-
-### MariaDB database
-
-Install [mariadb](https://mariadb.com/kb/en/getting-started-with-the-nodejs-connector/) package:
-
-```
-$ npm install mariadb
-```
-
-In `src/db/db.js` file:
-
-* Comment `const Mysql = require("./drivers/mysql");`
-* Uncomment `const MariaDb = require("./drivers/mariadb");`
-* Use  `this.db = await new MariaDb();` instead `this.db = await new Mysql();`
+Create a MySQLtable based on the MySQL schema located in `db/` folder.
 
 ## Usage
 
@@ -118,6 +80,6 @@ debug - Debug mode
 
 ## Resources
 
--   PostgreSQL: https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js *(not using Heroku anymore)*
+-   PostgreSQL: https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js *(not using Heroku and PostgreSQL anymore)*
 -   Pupeeter: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku *(replaced by Cheerio)*
 -   Heroku Telegram Bot: https://github.com/odditive/heroku-node-telegram-bot *(not using Heroku anymore)*
