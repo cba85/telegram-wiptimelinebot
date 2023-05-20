@@ -5,17 +5,13 @@ const Telegram = require("../src/telegram");
 const Db = require("../src/db/db");
 
 (async () => {
-  console.log(`🤖 Start WIP.co parser`);
   const db = await new Db();
-
   const telegramBot = new Telegram();
 
   // Get users
   const users = await db.getUsers();
 
   for (user of users) {
-    console.log(`👋 User: ${user.username} #${user.id}`);
-
     // Get the followers of the current user
     const follows = await db.getFollowers(user.id);
     //console.log(follows);
@@ -32,8 +28,6 @@ const Db = require("../src/db/db");
     //console.log(todos);
     //process.exit();
 
-    console.log(`👀 ${todos.length} todos retrieved for this user`);
-
     let countTodosSent = 0;
     for (todo of todos) {
       const exists = await db.existsTodo(user.id, todo.id);
@@ -44,14 +38,22 @@ const Db = require("../src/db/db");
         await db.saveTodo(user.id, todo);
         await telegramBot.sendMessage(user.id, todo);
         countTodosSent++;
-        console.log(`💬 ${countTodosSent} | ${todo.username}: ${todo.body}`);
+
+        //console.log(`💬 ${countTodosSent} | ${todo.username}: ${todo.body}`);
+        /*
         console.log(
           `${todo.images.length} photos + ${todo.videos.length} videos`
         );
+        */
       }
     }
 
-    console.log(`📢 ${countTodosSent} todos sent to Telegram`);
+    // Display logs only if send todo to Telegram
+    if (countTodosSent) {
+      console.log(`👋 User: ${user.username} #${user.id}`);
+      console.log(`👀 ${todos.length} todos retrieved for this user`);
+      console.log(`📢 ${countTodosSent} todos sent to Telegram`);
+    }
   }
 
   process.exit();
