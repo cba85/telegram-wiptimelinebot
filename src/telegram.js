@@ -18,7 +18,7 @@ module.exports = class Telegram {
       this.db = db;
     }
 
-    console.log(`Telegram bot server started in ${process.env.APP_ENV} env`);
+    //console.log(`Telegram bot server started in ${process.env.APP_ENV} env`);
   }
 
   // Commands
