@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: __dirname + "/../.env" });
 
 const { browse } = require("../src/parser");
 const Telegram = require("../src/telegram");
