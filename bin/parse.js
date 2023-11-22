@@ -50,6 +50,7 @@ const Db = require("../src/db/db");
 
     // Display logs only if send todo to Telegram
     if (countTodosSent) {
+      console.log(`${new Date().toISOString()} [PARSE]`);
       console.log(`👋 User: ${user.username} #${user.id}`);
       console.log(`👀 ${todos.length} todos retrieved for this user`);
       console.log(`📢 ${countTodosSent} todos sent to Telegram`);
