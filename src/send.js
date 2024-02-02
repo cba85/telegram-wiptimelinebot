@@ -40,7 +40,7 @@ exports.sendVideo = async (bot, chatId, reply, { videos }) => {
       }
     } else {
       // > 20mb: send video url on Telegram
-      const videoMessage = `${username}: <a href="${video}">▶️ video</a> – ${body}`;
+      const videoMessage = `<a href="${video}">▶️ video</a>`;
       try {
         await bot.sendMessage(chatId, videoMessage, {
           reply_to_message_id: reply.message_id,
