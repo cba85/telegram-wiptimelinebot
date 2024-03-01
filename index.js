@@ -13,10 +13,13 @@ const nunjucks = require("nunjucks");
 
   app.use(bodyParser.json());
   app.use(compression());
-  app.use(helmet());
+
+  if (process.env.NODE_ENV == "production") {
+    app.use(helmet());
+  }
 
   let noCache = false;
-  if (process.env.APP_ENV == "local") {
+  if (process.env.NODE_ENV == "local") {
     noCache = true;
   }
 

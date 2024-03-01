@@ -5,7 +5,7 @@ const Db = require("./db/db");
 
 module.exports = class Telegram {
   constructor(db = null) {
-    if (process.env.APP_ENV == "production") {
+    if (process.env.NODE_ENV == "production") {
       this.bot = new telegramBot(process.env.TELEGRAM_BOT_TOKEN);
       this.bot.setWebHook(`${process.env.APP_URL}/${this.bot.token}`);
     } else {
@@ -18,7 +18,7 @@ module.exports = class Telegram {
       this.db = db;
     }
 
-    //console.log(`Telegram bot server started in ${process.env.APP_ENV} env`);
+    //console.log(`Telegram bot server started in ${process.env.NODE_ENV} env`);
   }
 
   // Commands
