@@ -4,10 +4,16 @@ const puppeteer = require('puppeteer');
 exports.browse = async (follows, maxPage = 1) => {
   let todos = [];
 
-   const browser = await puppeteer.launch(); // { headless: false }
-   const page = await browser.newPage();
+  const options = {}
 
-   for (i = 1; i <= maxPage; i++) {
+  if (process.env.NODE_ENV == "production") {
+    options.executablePath = '/usr/bin/chromium-browser';
+  }
+
+  const browser = await puppeteer.launch(options);
+  const page = await browser.newPage();
+
+  for (i = 1; i <= maxPage; i++) {
     const url = `https://wip.co/?page=${i}`;
 
     await page.goto(url, { waitUntil: 'networkidle0' });
