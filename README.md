@@ -8,7 +8,7 @@ Create your custom [WIP.co](https://wip.co/) completed todos timeline of your fa
 
 This is a simple app to parse [WIP.co](https://wip.co/) website, get your favorite makers completed todos, and send them on Telegram using a Telegram bot.
 
-This app doesn't require an active account on the website because it doesn't use wip.co API, but scraps wip.co website instead using [cheerio](https://cheerio.js.org/).
+This app doesn't require an active account on the website because it doesn't use wip.co API, but scraps wip.co website instead using [cheerio](https://cheerio.js.org/) and [puppeteer](https://pptr.dev).
 
 This app contains a entry point `index.js` that is the Telegram bot listener.
 
@@ -24,13 +24,13 @@ It also contains 2 scripts located in `bin/` folder:
 
 ## Install
 
-```
+```sh
 $ npm install
 ```
 
 Create a `.env` file based on `.env.example` file:
 
-```bash
+```sh
 cp -v .env.example .env
 ```
 
@@ -44,7 +44,7 @@ Create a MySQLtable based on the MySQL schema located in `db/` folder.
 
 Launch bot:
 
-```
+```sh
 $ node index.js
 ```
 
@@ -52,7 +52,7 @@ In your Telegram bot, add usernames you want to follow using `/follow @username`
 
 Then launch the script to parse and get [WIP.co](https://wip.co/) todos of these users inside your Telegram bot:
 
-```
+```sh
 $ node bin.parse.js [MAX_PAGE_TO_SCRAP]
 ```
 
@@ -81,5 +81,5 @@ debug - Debug mode
 ## Resources
 
 -   PostgreSQL: https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js *(not using Heroku and PostgreSQL anymore)*
--   Pupeeter: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku *(replaced by Cheerio)*
+-   Pupeeter: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-on-heroku *(not using Heroku anymore)*
 -   Heroku Telegram Bot: https://github.com/odditive/heroku-node-telegram-bot *(not using Heroku anymore)*

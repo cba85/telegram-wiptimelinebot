@@ -10,13 +10,14 @@ const Db = require("../src/db/db");
 
   // Get users
   const users = await db.getUsers();
+  //console.log(users);
 
   for (user of users) {
     // Get the followers of the current user
     const follows = await db.getFollowers(user.id);
     //console.log(follows);
 
-    let maxPage = 1;
+    let maxPage = 7;
     if (typeof process.argv[2] !== "undefined") {
       maxPage = parseInt(process.argv[2]);
     }

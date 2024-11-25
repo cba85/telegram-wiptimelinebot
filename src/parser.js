@@ -1,40 +1,32 @@
-const axios = require("axios");
 const cheerio = require("cheerio");
+const puppeteer = require('puppeteer');
 
 exports.browse = async (follows, maxPage = 1) => {
   let todos = [];
 
-  for (i = 1; i <= maxPage; i++) {
+   const browser = await puppeteer.launch(); // { headless: false }
+   const page = await browser.newPage();
+
+   for (i = 1; i <= maxPage; i++) {
     const url = `https://wip.co/?page=${i}`;
-    let body;
 
-    try {
-      const response = await axios.get(url);
-      body = response.data;
-    } catch (e) {
-      throw new Error(`Fetch error ${e.response.status}`);
-    }
+    await page.goto(url, { waitUntil: 'networkidle0' });
+    const html = await page.evaluate(() => document.querySelector('*').outerHTML);
 
-    const $ = cheerio.load(body);
+    const $ = cheerio.load(html);
 
     const divs = $(".contents").find("turbo-frame");
 
     divs.each((index, turboFrame) => {
-      const usernameElement = $(turboFrame).find(
-        "div .flex .gap-2 .items-center > a[data-controller]"
-      );
+      const usernameElement = $(turboFrame).find("div .flex .gap-2 .items-center > a[data-controller]");
 
       let username = usernameElement.attr("href");
 
-      if (!username) {
-        return;
-      }
+      if (!username) { return; }
 
       username = username.replace("/", "");
 
-      if (!follows.includes(username)) {
-        return;
-      }
+      if (!follows.includes(username)) { return; }
 
       // Create todo item
       let t = {};
@@ -44,8 +36,7 @@ exports.browse = async (follows, maxPage = 1) => {
       t.username = username;
 
       // Regexes
-      const regexDataHovercardUrlValue =
-        /data-hovercard-url-value="(.|\n)*?"/gm;
+      const regexDataHovercardUrlValue = /data-hovercard-url-value="(.|\n)*?"/gm;
       const regexStyle = /<style>(.|\n)*?<\/style>/gm;
       const regexClass = /class="(.|\n)*?"/gm;
       const regexStyle2 = /style="(.|\n)*?"/gm;
@@ -74,15 +65,13 @@ exports.browse = async (follows, maxPage = 1) => {
       imagesElement.each((index, img) => {
         const srcsets = $(img).attr("srcset");
 
-        if (!srcsets) {
-          return;
-        }
+        if (!srcsets) { return; }
 
         const width = $(img).attr("width");
 
-        if (width == 25 || width == 40) {
-          return;
-        }
+        if (width == 25 || width == 40) { return; }
+
+        if (srcsets.includes("avatar")) { return; }
 
         // Get high res images
         const srcset = srcsets.split(",");
@@ -101,6 +90,8 @@ exports.browse = async (follows, maxPage = 1) => {
       todos.push(t);
     });
   }
+
+  await browser.close();
 
   return todos;
 };
