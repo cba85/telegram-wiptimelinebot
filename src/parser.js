@@ -7,7 +7,7 @@ exports.browse = async (follows, maxPage = 1) => {
   const options = {}
 
   if (process.env.NODE_ENV == "production") {
-    options.executablePath = '/usr/bin/chromium-browser';
+    options.executablePath = '/usr/bin/chromium';
   }
 
   const browser = await puppeteer.launch(options);
