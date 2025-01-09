@@ -2,7 +2,9 @@
 
 Create your custom [WIP.co](https://wip.co/) completed todos timeline of your favorite makers on Telegram.
 
-🤖 To use the bot, just add [WipTimelineBot](https://t.me/WipTimelineBot) on Telegram !
+~~🤖 To use the bot, just add [WipTimelineBot](https://t.me/WipTimelineBot) on Telegram !~~
+
+> I don't really use WIP anymore, that's why I've decided to stop the bot. I keep the code open-source, and I hope it will help someone !
 
 ---
 
